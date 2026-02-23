@@ -60,4 +60,4 @@ class hand :
         if straight is True and flush is True:
             straight_flush = True
         if n_suite[-1]==13 and straight_flush is True :
-            royal_flush is True
+            royal_flush = True
