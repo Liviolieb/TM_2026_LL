@@ -11,13 +11,13 @@ class partie :
             cartes_x= random.choice(partie.pack, k=2)
             partie.pack -= cartes_x
             joueur.cartes = cartes_x
-        flop_partie= random.choice(partie.pack, k=3)
-        partie.pack -= flop_partie
-        turn_partie= random.choice(partie.pack, k=1)
-        partie.pack -= turn_partie
-        river_partie= random.choice(partie.pack, k=1)
-        partie.pack -= river_partie
-        table_partie = table.Table(flop_partie,turn_partie,river_partie)
+        self.flop_partie= random.choice(partie.pack, k=3)
+        partie.pack -= self.flop_partie
+        self.turn_partie= random.choice(partie.pack, k=1)
+        partie.pack -= self.turn_partie
+        self.river_partie= random.choice(partie.pack, k=1)
+        partie.pack -= self.river_partie
+        self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie)
     def vote(self):
         index_vote=0
         while True:
@@ -36,3 +36,13 @@ class partie :
                 break
             else :
                 print("pas un vote autorisé")
+    def afficher_carte_table(self):
+        for i in range (self.table_partie.etape):
+            for j in range (len(self.table_partie.liste[i])):
+                print (self.table_partie.Liste[i][j])
+    def afficher_cartes(self):
+        self.afficher_carte_table(self.table_partie.etape)
+        for i in range (len(self.L_joueurs)):
+            for j in range (2) :
+                print (self.L_joueurs[i].cartes[j])
+    

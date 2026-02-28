@@ -1,7 +1,10 @@
+import table
 class hand :
-    def __init__(self,cartes_joueur, flop, turn, river,):
+    def __init__(self,cartes_joueur, table):
         cartes_jouables = []
-        cartes_jouables.append(cartes_joueur,flop,turn, river)
+        cartes_jouables.append(cartes_joueur)
+        for i in range (table.etape):
+            cartes_jouables.append(table.liste[i])
         self.cartes_jouables = cartes_jouables
         
     def analyse_main (self):
