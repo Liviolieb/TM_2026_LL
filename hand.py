@@ -1,4 +1,5 @@
 import table
+import cartes
 class hand :
     def __init__(self,cartes_joueur, table):
         cartes_jouables = []
@@ -14,6 +15,7 @@ class hand :
         nb_coeur=0
         L_valeur=[]
         pair = False
+        nb_pair =0
         two_pair = False
         three_oak= False
         straight= False
@@ -24,15 +26,15 @@ class hand :
         royal_flush=False
 
         for i in range (len(self.cartes_jouables)) :
-            x=self.cartes_jouables[i].valeur
+            x=cartes.Cartes(self.cartes_jouables[i]).valeur
             L_valeur.append(x)
-            if self.cartes_jouables[i].couleur == "pique" :
+            if cartes.Cartes(self.cartes_jouables[i]).couleur == "pique" :
                 nb_pique+=1
-            if self.cartes_jouables[i].couleur == "trefle" :
+            if cartes.Cartes(self.cartes_jouables[i]).couleur == "trefle" :
                 nb_trefle+=1
-            if self.cartes_jouables[i].couleur == "carreau" :
+            if cartes.Cartes(self.cartes_jouables[i]).couleur == "carreau" :
                 nb_carreau+=1
-            if self.cartes_jouables[i].couleur == "coeur" :
+            if cartes.Cartes(self.cartes_jouables[i]).couleur == "coeur" :
                 nb_coeur+=1
         if nb_carreau or nb_coeur or nb_trefle or nb_pique >= 5:
             flush = True
@@ -62,5 +64,5 @@ class hand :
                 n_suite = 0
         if straight is True and flush is True:
             straight_flush = True
-        if n_suite[-1]==13 and straight_flush is True :
+        if L_sorted[-1]==13 and straight_flush is True :
             royal_flush = True

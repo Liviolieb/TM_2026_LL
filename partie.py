@@ -4,19 +4,23 @@ import hand
 import table
 import random
 class partie :
-    pack = cartes.creer_pack()
+    pack = cartes.Cartes.creer_pack()
     def __init__(self,L_joueurs):
         self.L_joueurs = L_joueurs
         for joueur in L_joueurs:
-            cartes_x= random.choice(partie.pack, k=2)
-            partie.pack -= cartes_x
+            cartes_x= random.sample(partie.pack, 2)
+            for carte in cartes_x:
+                partie.pack.remove(carte)
             joueur.cartes = cartes_x
-        self.flop_partie= random.choice(partie.pack, k=3)
-        partie.pack -= self.flop_partie
-        self.turn_partie= random.choice(partie.pack, k=1)
-        partie.pack -= self.turn_partie
-        self.river_partie= random.choice(partie.pack, k=1)
-        partie.pack -= self.river_partie
+        self.flop_partie= random.sample(partie.pack, 3)
+        for carte in self.flop_partie:
+                partie.pack.remove(carte)
+        self.turn_partie= random.sample(partie.pack, 1)
+        for carte in self.turn_partie:
+                partie.pack.remove(carte)
+        self.river_partie= random.sample(partie.pack, 1)
+        for carte in self.river_partie:
+                partie.pack.remove(carte)
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie)
     def vote(self):
         index_vote=0
@@ -36,13 +40,12 @@ class partie :
                 break
             else :
                 print("pas un vote autorisé")
-    def afficher_carte_table(self):
+    def afficher_cartes_table(self):
         for i in range (self.table_partie.etape):
             for j in range (len(self.table_partie.liste[i])):
-                print (self.table_partie.Liste[i][j])
+                print (self.table_partie.liste[i][j])
     def afficher_cartes(self):
-        self.afficher_carte_table(self.table_partie.etape)
+        self.afficher_cartes_table(self.table_partie.etape)
         for i in range (len(self.L_joueurs)):
             for j in range (2) :
                 print (self.L_joueurs[i].cartes[j])
-    

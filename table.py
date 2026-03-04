@@ -1,6 +1,6 @@
 class Table :
     etape=0
-    def __init__(self, flop, turn, river, main_pot , side_pot):
+    def __init__(self, flop, turn, river, main_pot = None , side_pot=None):
         self.flop = flop
         self.turn = turn
         self.river = river
