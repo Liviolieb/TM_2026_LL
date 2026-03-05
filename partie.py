@@ -23,6 +23,7 @@ class partie :
                 partie.pack.remove(carte)
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie)
     def vote(self):
+        self.table_partie.mise =0
         index_vote=0
         while True:
             joueur = self.L_joueurs[index_vote]
@@ -37,10 +38,33 @@ class partie :
                     index_vote += 1
                     break
             if vote_juste == True:
-                break
+                if vote == joueurs.Joueurs.Vote[0]:
+                     while True:
+                        x = int(input("Quelle mise voulez vous rajouter? :"))
+                        if x < joueur.solde :
+                             joueur.mise =x
+                             while True:
+                                if joueur.mise >= self.table_partie.mise:
+                                    self.table_partie.mise=joueur.mise
+                                    break
+                                if joueur.mise < self.table_partie.mise:
+                                     print(f"vous devez miser au minimum {self.table_partie.mise}")
+                        else : 
+                             print ("vous n'avez pas le solde nécessaire")
+                             break
+                if vote == joueurs.Joueurs.Vote[3]:
+                     joueur.mise = joueur.solde
+                if vote == joueurs.Joueurs.Vote[1]:
+                     joueur.mise = self.table_partie.mise
+                if vote == joueurs.Joueurs.Vote[2]:
+                     self.L_joueurs.remove(joueur)
             else :
                 print("pas un vote autorisé")
+            if index_vote == len(self.L_joueurs):
+                 break
+        
     def afficher_cartes_table(self):
+        print(table.Table.type_etape[self.table_partie.etape])
         for i in range (self.table_partie.etape):
             for j in range (len(self.table_partie.liste[i])):
                 print (self.table_partie.liste[i][j])

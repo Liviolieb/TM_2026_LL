@@ -10,6 +10,8 @@ for i in range (nb_joueurs):
     joueur_x= joueurs.Joueurs(nom_joueur_x,solde_joueur_x)
     L_joueurs.append(joueur_x)
 partie_x = partie.partie(L_joueurs)
+for joueur in L_joueurs:
+    joueur.afficher_cartes()
 partie_x.vote()
 partie_x.table_partie.etape +=1
 partie_x.afficher_cartes_table()
