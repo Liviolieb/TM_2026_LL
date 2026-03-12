@@ -18,4 +18,19 @@ partie_x.afficher_cartes_table()
 for i in range (nb_joueurs):
     L_joueurs[i].cartes_jouables = hand.hand(L_joueurs[i].cartes, partie_x.table_partie)
     L_joueurs[i].cartes_jouables.analyse_main()
+    print (L_joueurs[i].cartes_jouables)
 partie_x.vote()
+partie_x.table_partie.etape +=1
+partie_x.afficher_cartes_table()
+for i in range (nb_joueurs):
+    L_joueurs[i].cartes_jouables = hand.hand(L_joueurs[i].cartes, partie_x.table_partie)
+    L_joueurs[i].cartes_jouables.analyse_main()
+    print (L_joueurs[i].cartes_jouables)
+partie_x.vote()
+partie_x.table_partie.etape +=1
+partie_x.afficher_cartes_table()
+for i in range (nb_joueurs):
+    L_joueurs[i].cartes_jouables = hand.hand(L_joueurs[i].cartes, partie_x.table_partie)
+    L_joueurs[i].cartes_jouables.analyse_main()
+    print (L_joueurs[i].cartes_jouables)
+xs

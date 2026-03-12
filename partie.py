@@ -58,6 +58,7 @@ class partie :
                      joueur.mise = self.table_partie.mise
                 if vote == joueurs.Joueurs.Vote[2]:
                      self.L_joueurs.remove(joueur)
+                     index_vote-=1
             else :
                 print("pas un vote autorisé")
             if index_vote == len(self.L_joueurs):
