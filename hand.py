@@ -16,6 +16,13 @@ class hand :
         nb_coeur=0
         L_valeur=[]
         nb_pair =0
+        pair =False
+        three_oak =False
+        four_oak = False
+        flush = False
+        straight = False
+        straight_flush = False
+
         for i in range (1,14):
             occurence_valeur =L_valeur.count(i)
             if occurence_valeur == 2:
@@ -57,6 +64,7 @@ class hand :
                 if n_suite == 4 :
                     suite.append(L_sorted[i+1])
                     straight=True
+                    main_special= "straight"
                     break
             else :
                 n_suite = 0

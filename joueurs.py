@@ -2,7 +2,7 @@ class Joueurs :
     Vote =["aug","suivre","coucher","tapis"]
     def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=None, cartes_jouables=None):
         self.nom = nom
-        self.sold=solde
+        self.solde=solde
         self.cartes = cartes
         self.vote =vote
         self.role = role

@@ -43,12 +43,11 @@ class partie :
                         x = int(input("Quelle mise voulez vous rajouter? :"))
                         if x < joueur.solde :
                              joueur.mise =x
-                             while True:
-                                if joueur.mise >= self.table_partie.mise:
-                                    self.table_partie.mise=joueur.mise
-                                    break
-                                if joueur.mise < self.table_partie.mise:
-                                     print(f"vous devez miser au minimum {self.table_partie.mise}")
+                        if joueur.mise >= self.table_partie.mise:
+                            self.table_partie.mise=joueur.mise
+                            break
+                        if joueur.mise < self.table_partie.mise:
+                                print(f"vous devez miser au minimum {self.table_partie.mise}")
                         else : 
                              print ("vous n'avez pas le solde nécessaire")
                              break
