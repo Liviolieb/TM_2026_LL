@@ -1,6 +1,6 @@
 class Joueurs :
     Vote =["aug","suivre","coucher","tapis"]
-    def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=None, cartes_jouables=None):
+    def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=None, cartes_jouables=None, combo =None):
         self.nom = nom
         self.solde=solde
         self.cartes = cartes
@@ -8,6 +8,7 @@ class Joueurs :
         self.role = role
         self.mise= mise
         self.cartes_jouables = cartes_jouables
+        self.combo = combo
     def __str__ (self):
         return self.nom
     def afficher_cartes(self):
