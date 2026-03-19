@@ -73,20 +73,20 @@ class partie :
         for i in range (len(self.L_joueurs)):
             for j in range (2) :
                 print (self.L_joueurs[i].cartes[j])
-    def def_gagant (self) :
+    def def_gagnant (self) :
         for i in range(len(self.L_joueurs)) :
             for j in range(len(self.L_joueurs)) :
-                if self.L_joueurs[i].combo <= self.L_joueurs[j].combo :
+                if self.L_joueurs[i].combo >= self.L_joueurs[j].combo :
                     temp = self.L_joueurs[i]
                     self.L_joueurs[i]=self.L_joueurs[j]
                     self.L_joueurs[j]= temp
         index=0
-        while self.L_joueurs(index).combo == self.L_joueurs(index+1).combo :
+        while self.L_joueurs[index].combo == self.L_joueurs[index+1].combo :
              index+=1
         if index ==0:
-             return (self.L_joueurs(0))
+             return (self.L_joueurs[0])
         else :
             L_joueurs_gagnants = []
             for i in range (index) :
-                 L_joueurs_gagnants.append(self.L_joueurs(i))
-            return (L_joueurs_gagnants)
+                 L_joueurs_gagnants.append(self.L_joueurs[i])
+            

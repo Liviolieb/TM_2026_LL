@@ -1,6 +1,6 @@
 class Table :
     etape=0
-    type_etape=["flop","turn","river"]
+    type_etape=["stage0","flop","turn","river"]
     def __init__(self, flop, turn, river,mise=0, main_pot = None , side_pot=None):
         self.flop = flop
         self.turn = turn
