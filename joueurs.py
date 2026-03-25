@@ -11,7 +11,3 @@ class Joueurs :
         self.combo = combo
     def __str__ (self):
         return self.nom
-    def afficher_cartes(self):
-        print (self.nom,"a :")
-        for carte in self.cartes:
-            print (carte)

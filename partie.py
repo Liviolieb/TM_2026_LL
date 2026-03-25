@@ -2,6 +2,7 @@ import joueurs
 import cartes
 import hand
 import table
+import afficher
 import random
 class partie :
     pack = cartes.Cartes.creer_pack()
@@ -27,9 +28,7 @@ class partie :
         index_vote=0
         while True:
             joueur = self.L_joueurs[index_vote]
-            print(f"{joueur}, que voulez vous faire")
-            print(joueurs.Joueurs.Vote)
-            vote_x = input(":")
+            vote_x = afficher.afficher_vote(0,joueur,self.table_partie.mise)
             vote_juste = False
             for vote in joueurs.Joueurs.Vote :
                 if vote_x == vote :
@@ -40,17 +39,17 @@ class partie :
             if vote_juste == True:
                 if vote == joueurs.Joueurs.Vote[0]:
                      while True:
-                        x = int(input("Quelle mise voulez vous rajouter? :"))
+                        x = afficher.afficher_vote(1,joueur,self.table_partie.mise)
                         if x < joueur.solde :
                              joueur.mise =x
                         if joueur.mise >= self.table_partie.mise:
                             self.table_partie.mise=joueur.mise
                             break
                         if joueur.mise < self.table_partie.mise:
-                                print(f"vous devez miser au minimum {self.table_partie.mise}")
+                                afficher.afficher_vote(2,joueur,self.table_partie.mise)
                         else : 
-                             print ("vous n'avez pas le solde nécessaire")
-                             break
+                            afficher.afficher_vote(3,joueur,self.table_partie.mise)
+                            break
                 if vote == joueurs.Joueurs.Vote[3]:
                      joueur.mise = joueur.solde
                 if vote == joueurs.Joueurs.Vote[1]:
@@ -59,20 +58,10 @@ class partie :
                      self.L_joueurs.remove(joueur)
                      index_vote-=1
             else :
-                print("pas un vote autorisé")
+                afficher.afficher_vote(4,joueur,self.table_partie.mise)
             if index_vote == len(self.L_joueurs):
                  break
         
-    def afficher_cartes_table(self):
-        print(table.Table.type_etape[self.table_partie.etape])
-        for i in range (self.table_partie.etape):
-            for j in range (len(self.table_partie.liste[i])):
-                print (self.table_partie.liste[i][j])
-    def afficher_cartes(self):
-        self.afficher_cartes_table(self.table_partie.etape)
-        for i in range (len(self.L_joueurs)):
-            for j in range (2) :
-                print (self.L_joueurs[i].cartes[j])
     def def_gagnant (self) :
         for i in range(len(self.L_joueurs)) :
             for j in range(len(self.L_joueurs)) :

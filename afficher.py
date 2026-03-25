@@ -1,0 +1,41 @@
+import joueurs
+import table
+
+def afficher_vote (etape,joueur,mise):
+    if etape == 0:
+        print(f"{joueur}, que voulez vous faire")
+        print(joueurs.Joueurs.Vote)
+        vote_x = input(":")
+        return (vote_x)
+    if etape ==1:
+        x = int(input("Quelle mise voulez vous rajouter? :"))
+        return x
+    if etape ==2:
+        print(f"vous devez miser au minimum {mise}")
+    if etape==3:
+        print ("vous n'avez pas le solde nécessaire")
+    if etape ==4:
+        print("pas un vote autorisé")
+
+def afficher_cartes_joueur(joueur):
+        print (joueur.nom,"a :")
+        for carte in joueur.cartes:
+            print (carte)
+
+def afficher_cartes_table(partie):
+        print(table.Table.type_etape[partie.table_partie.etape])
+        for i in range (partie.table_partie.etape):
+            for j in range (len(partie.table_partie.liste[i])):
+                print (partie.table_partie.liste[i][j])
+
+def nb_de_j ():
+    x= int(input("Combien de joueurs :"))
+    return(x)
+
+def nom_solde (i):
+    nom_joueur_x= input(f"nom du joueur {i+1}:")
+    solde_joueur_x= int(input("Quel est sa solde de départ :"))
+    return (nom_joueur_x,solde_joueur_x)
+
+def grand_gagnant (gagnant):
+     print(f"le grand gagnant est {gagnant.nom}")
