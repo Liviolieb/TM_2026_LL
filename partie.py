@@ -26,7 +26,10 @@ class partie :
     def vote(self):
         self.table_partie.mise =0
         index_vote=0
+        joueur_aug=0
         while True:
+            if index_vote ==0:
+                 nouveau_vote =False
             joueur = self.L_joueurs[index_vote]
             vote_x = afficher.afficher_vote(0,joueur,self.table_partie.mise)
             vote_juste = False
@@ -38,12 +41,16 @@ class partie :
                     break
             if vote_juste == True:
                 if vote == joueurs.Joueurs.Vote[0]:
-                     while True:
+                    if index_vote != 0:
+                        nouveau_vote =True
+                        joueur_aug = index_vote
+                    while True:
                         x = afficher.afficher_vote(1,joueur,self.table_partie.mise)
                         if x < joueur.solde :
-                             joueur.mise =x
-                        if joueur.mise >= self.table_partie.mise:
-                            self.table_partie.mise=joueur.mise
+                            joueur.solde -=(self.table_partie.mise-joueur.mise)+x
+                            self.table_partie.main_pot += (self.table_partie.mise-joueur.mise)+x
+                            joueur.mise =x + self.table_partie.mise
+                            self.table_partie.mise+=x
                             break
                         if joueur.mise < self.table_partie.mise:
                                 afficher.afficher_vote(2,joueur,self.table_partie.mise)
@@ -52,7 +59,10 @@ class partie :
                             break
                 if vote == joueurs.Joueurs.Vote[3]:
                      joueur.mise = joueur.solde
+                     joueur.solde =0
                 if vote == joueurs.Joueurs.Vote[1]:
+                     joueur.solde -= self.table_partie.mise-joueur.mise
+                     self.table_partie.main_pot += self.table_partie.mise-joueur.mise
                      joueur.mise = self.table_partie.mise
                 if vote == joueurs.Joueurs.Vote[2]:
                      self.L_joueurs.remove(joueur)
@@ -60,6 +70,11 @@ class partie :
             else :
                 afficher.afficher_vote(4,joueur,self.table_partie.mise)
             if index_vote == len(self.L_joueurs):
+                if nouveau_vote is True:
+                    index_vote=0
+                else:
+                    break
+            if nouveau_vote is False and joueur_aug-1 == index_vote :
                  break
         
     def def_gagnant (self) :
@@ -71,11 +86,12 @@ class partie :
                     self.L_joueurs[j]= temp
         index=0
         while self.L_joueurs[index].combo == self.L_joueurs[index+1].combo :
-             index+=1
+            index+=1
+            if index==len(self.L_joueurs):
+                 break
         if index ==0:
              return (self.L_joueurs[0])
         else :
             L_joueurs_gagnants = []
             for i in range (index) :
                  L_joueurs_gagnants.append(self.L_joueurs[i])
-            

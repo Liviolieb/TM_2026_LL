@@ -30,7 +30,7 @@ def afficher_cartes_table(partie):
 
 def nb_de_j ():
     x= int(input("Combien de joueurs :"))
-    return(x)
+    return(int(x))
 
 def nom_solde (i):
     nom_joueur_x= input(f"nom du joueur {i+1}:")
@@ -39,3 +39,7 @@ def nom_solde (i):
 
 def grand_gagnant (gagnant):
      print(f"le grand gagnant est {gagnant.nom}")
+
+def afficher_solde (joueur):
+     print (joueur.nom,"a :")
+     print (joueur.solde,"de solde")
