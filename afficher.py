@@ -1,5 +1,6 @@
 import joueurs
 import table
+import hand
 
 def afficher_vote (etape,joueur,mise):
     if etape == 0:
@@ -43,3 +44,9 @@ def grand_gagnant (gagnant):
 def afficher_solde (joueur):
      print (joueur.nom,"a :")
      print (joueur.solde,"de solde")
+
+def afficher_combo (joueur):
+     print (f"{joueur} a :")
+     for i in range (len(joueur.cartes_jouee)):
+        print (joueur.cartes_jouee[i])
+     print (hand.hand.liste_main_s[int(joueur.combo)])

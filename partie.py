@@ -24,58 +24,82 @@ class partie :
                 partie.pack.remove(carte)
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie)
     def vote(self):
-        self.table_partie.mise =0
         index_vote=0
         joueur_aug=0
+        tapis=False
+        mise_tapis=0
         while True:
-            if index_vote ==0:
-                 nouveau_vote =False
             joueur = self.L_joueurs[index_vote]
-            vote_x = afficher.afficher_vote(0,joueur,self.table_partie.mise)
-            vote_juste = False
-            for vote in joueurs.Joueurs.Vote :
-                if vote_x == vote :
-                    joueur.vote = vote_x
-                    vote_juste = True
-                    index_vote += 1
+            if joueur.joue is True:
+                if index_vote ==0:
+                    nouveau_vote =False
+                vote_x = afficher.afficher_vote(0,joueur,self.table_partie.mise)
+                vote_juste = False
+                for vote in joueurs.Joueurs.Vote :
+                    if vote_x == vote :
+                        joueur.vote = vote_x
+                        vote_juste = True
+                        index_vote += 1
+                        break
+                if vote_juste == True:
+                    if vote == joueurs.Joueurs.Vote[0]:
+                        if index_vote != 0:
+                            nouveau_vote =True
+                            joueur_aug = index_vote
+                        while True:
+                            x = afficher.afficher_vote(1,joueur,self.table_partie.mise)
+                            if x < joueur.solde :
+                                joueur.solde -= (self.table_partie.mise - joueur.mise)+x
+                                self.table_partie.main_pot += (self.table_partie.mise - joueur.mise)+x
+                                joueur.mise =x + self.table_partie.mise
+                                self.table_partie.mise+=x
+                                break
+                            if joueur.mise < self.table_partie.mise:
+                                    afficher.afficher_vote(2,joueur,self.table_partie.mise)
+                            else : 
+                                afficher.afficher_vote(3,joueur,self.table_partie.mise)
+                                break
+                    if vote == joueurs.Joueurs.Vote[3]:
+                        self.table_partie.main_pot += (self.table_partie.mise - joueur.mise)+joueur.solde
+                        joueur.mise = joueur.solde + self.table_partie.mise
+                        self.table_partie.mise+=joueur.solde
+                        joueur.solde =0
+
+                    if vote == joueurs.Joueurs.Vote[1]:
+                        if joueur.solde - self.table_partie.mise-joueur.mise >= 0:
+                            joueur.solde -= self.table_partie.mise-joueur.mise
+                            if tapis is False:
+                                self.table_partie.main_pot += self.table_partie.mise-joueur.mise
+                            else:
+                                self.table_partie.main_pot += mise_tapis-joueur.mise
+                                self.table_partie.side_pot += self.table_partie.mise-mise_tapis
+                            joueur.mise = self.table_partie.mise
+                        else:
+                            self.table_partie.main_pot += (self.table_partie.mise - joueur.mise)+joueur.solde
+                            joueur.mise = joueur.solde + self.table_partie.mise
+                            self.table_partie.mise+=joueur.solde
+                            joueur.solde =0
+                    if vote == joueurs.Joueurs.Vote[2]:
+                        self.L_joueurs.remove(joueur)
+                        index_vote-=1
+                else :
+                    afficher.afficher_vote(4,joueur,self.table_partie.mise)
+                if joueur.solde == 0:
+                    tapis=True
+                    mise_tapis=joueur.mise
+                    joueur.joue=False
+                if index_vote == len(self.L_joueurs):
+                    if nouveau_vote is True:
+                        index_vote=0
+                        nouveau_vote = False
+                    else:
+                        break
+                if nouveau_vote is False and joueur_aug-1 == index_vote :
                     break
-            if vote_juste == True:
-                if vote == joueurs.Joueurs.Vote[0]:
-                    if index_vote != 0:
-                        nouveau_vote =True
-                        joueur_aug = index_vote
-                    while True:
-                        x = afficher.afficher_vote(1,joueur,self.table_partie.mise)
-                        if x < joueur.solde :
-                            joueur.solde -=(self.table_partie.mise-joueur.mise)+x
-                            self.table_partie.main_pot += (self.table_partie.mise-joueur.mise)+x
-                            joueur.mise =x + self.table_partie.mise
-                            self.table_partie.mise+=x
-                            break
-                        if joueur.mise < self.table_partie.mise:
-                                afficher.afficher_vote(2,joueur,self.table_partie.mise)
-                        else : 
-                            afficher.afficher_vote(3,joueur,self.table_partie.mise)
-                            break
-                if vote == joueurs.Joueurs.Vote[3]:
-                     joueur.mise = joueur.solde
-                     joueur.solde =0
-                if vote == joueurs.Joueurs.Vote[1]:
-                     joueur.solde -= self.table_partie.mise-joueur.mise
-                     self.table_partie.main_pot += self.table_partie.mise-joueur.mise
-                     joueur.mise = self.table_partie.mise
-                if vote == joueurs.Joueurs.Vote[2]:
-                     self.L_joueurs.remove(joueur)
-                     index_vote-=1
-            else :
-                afficher.afficher_vote(4,joueur,self.table_partie.mise)
-            if index_vote == len(self.L_joueurs):
-                if nouveau_vote is True:
-                    index_vote=0
-                else:
+            else:
+                index_vote += 1
+                if index_vote == len(self.L_joueurs):
                     break
-            if nouveau_vote is False and joueur_aug-1 == index_vote :
-                 break
         
     def def_gagnant (self) :
         for i in range(len(self.L_joueurs)) :
