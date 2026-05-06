@@ -38,39 +38,39 @@ class hand :
 
                 pair = True
                 nb_pair += 1
-                position = [i for i, x in enumerate(self.L_valeur) if x == self.L_valeur[i]]
-                for i in range (len(position)) :
-                    cartes_jouee.append(self.cartes_jouables[position[i]])
+                position = [j for j, x in enumerate(self.L_valeur) if x == i]
+                for j in range (len(position)) :
+                    cartes_jouee.append(self.cartes_jouables[position[j]])
                 if nb_pair >= 2:
                     main_special= 2
-                    position = [i for i, x in enumerate(self.L_valeur) if x == self.L_valeur[i]]
-                for i in range (len(position)) :
-                    cartes_jouee.append(self.cartes_jouables[position[i]])
+                    position = [i for i, x in enumerate(self.L_valeur) if x == i]
+                    for j in range (len(position)) :
+                        cartes_jouee.append(self.cartes_jouables[position[j]])
             if occurence_valeur == 3:
                 main_special= 3
                 if pair is False :
                     cartes_jouee =[]
-                position = [i for i, x in enumerate(self.L_valeur) if x == self.L_valeur[i]]
-                for i in range (len(position)) :
-                    cartes_jouee.append(self.cartes_jouables[position[i]])
+                position = [i for i, x in enumerate(self.L_valeur) if x == i]
+                for j in range (len(position)) :
+                    cartes_jouee.append(self.cartes_jouables[position[j]])
                 three_oak = True
             if three_oak and pair is True :
                 main_special = 4
             if occurence_valeur == 4:
                 four_oak = True
                 cartes_jouee=[]
-                position = [i for i, x in enumerate(self.L_valeur) if x == self.L_valeur[i]]
+                position = [i for i, x in enumerate(self.L_valeur) if x == i]
                 for i in range (len(position)) :
                     cartes_jouee.append(self.cartes_jouables[position[i]])
-        for i in range (len(self.cartes_jouables))  :
-            if cartes.Cartes(self.cartes_jouables[i]).couleur == "pique" :
-                L_pique.append(self.cartes_jouables[i])
-            if cartes.Cartes(self.cartes_jouables[i]).couleur == "trefle" :
-                L_trefle.append(self.cartes_jouables[i])
-            if cartes.Cartes(self.cartes_jouables[i]).couleur == "carreau" :
-                L_carreau.append(self.cartes_jouables[i])
-            if cartes.Cartes(self.cartes_jouables[i]).couleur == "coeur" :
-                L_coeur.append(self.cartes_jouables[i])
+        for j in range (len(self.cartes_jouables))  :
+            if cartes.Cartes(self.cartes_jouables[j]).couleur == "pique" :
+                L_pique.append(self.cartes_jouables[j])
+            if cartes.Cartes(self.cartes_jouables[j]).couleur == "trefle" :
+                L_trefle.append(self.cartes_jouables[j])
+            if cartes.Cartes(self.cartes_jouables[j]).couleur == "carreau" :
+                L_carreau.append(self.cartes_jouables[j])
+            if cartes.Cartes(self.cartes_jouables[j]).couleur == "coeur" :
+                L_coeur.append(self.cartes_jouables[j])
         if len(L_carreau) >= 5:
             main_special=5
             flush = True
