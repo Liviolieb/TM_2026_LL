@@ -30,7 +30,7 @@ class partie :
         mise_tapis=0
         while True:
             joueur = self.L_joueurs[index_vote]
-            if joueur.joue is True:
+            if len(self.L_joueurs)>1 :
                 if index_vote ==0:
                     nouveau_vote =False
                 vote_x = afficher.afficher_vote(0,joueur,self.table_partie.mise)
@@ -80,6 +80,7 @@ class partie :
                             self.table_partie.mise+=joueur.solde
                             joueur.solde =0
                     if vote == joueurs.Joueurs.Vote[2]:
+                        joueur.joue =False
                         self.L_joueurs.remove(joueur)
                         index_vote-=1
                 else :
@@ -102,20 +103,32 @@ class partie :
                     break
         
     def def_gagnant (self) :
+        joueur_gagnant = None
+        if len(self.L_joueurs)==1:
+            joueur_gagnant=self.L_joueurs[0]
+            return(joueur_gagnant)
         for i in range(len(self.L_joueurs)) :
             for j in range(len(self.L_joueurs)) :
                 if self.L_joueurs[i].combo >= self.L_joueurs[j].combo :
                     temp = self.L_joueurs[i]
                     self.L_joueurs[i]=self.L_joueurs[j]
                     self.L_joueurs[j]= temp
-        index=0
-        while self.L_joueurs[index].combo == self.L_joueurs[index+1].combo :
+        index=1
+        while self.L_joueurs[index-1].combo == self.L_joueurs[index].combo :
             index+=1
             if index==len(self.L_joueurs):
                  break
-        if index ==0:
-             return (self.L_joueurs[0])
+        if index ==1:
+            joueur_gagnant = self.L_joueurs[0]
         else :
+            points_gagnant=0
             L_joueurs_gagnants = []
             for i in range (index) :
                  L_joueurs_gagnants.append(self.L_joueurs[i])
+            for joueur in L_joueurs_gagnants:
+                for carte in joueur.cartes_jouee:
+                    joueur.points+=carte.valeur
+                if joueur.points>points_gagnant:
+                    points_gagnant=joueur.points
+                    joueur_gagnant= joueur
+        return (joueur_gagnant)

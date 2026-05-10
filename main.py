@@ -17,27 +17,27 @@ for joueur in L_joueurs:
     afficher.afficher_solde(joueur)
 partie_x.table_partie.etape +=1
 afficher.afficher_cartes_table(partie_x)
-for i in range (nb_joueurs-1):
-    L_joueurs[i].cartes_jouables = hand.hand(L_joueurs[i].cartes, partie_x.table_partie)
-    L_joueurs[i].combo, L_joueurs[i].cartes_jouee = L_joueurs[i].cartes_jouables.analyse_main()
-    afficher.afficher_combo(L_joueurs[i])
+for joueur in L_joueurs:
+    joueur.cartes_jouables = hand.hand(joueur.cartes, partie_x.table_partie)
+    joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
+    afficher.afficher_combo(joueur)
 partie_x.vote()
 for joueur in L_joueurs:
     afficher.afficher_solde(joueur)
 partie_x.table_partie.etape +=1
 afficher.afficher_cartes_table(partie_x)
-for i in range (nb_joueurs-1):
-    L_joueurs[i].cartes_jouables = hand.hand(L_joueurs[i].cartes, partie_x.table_partie)
-    L_joueurs[i].combo, L_joueurs[i].cartes_jouee = L_joueurs[i].cartes_jouables.analyse_main()
-    afficher.afficher_combo(L_joueurs[i])
+for joueur in L_joueurs:
+    joueur.cartes_jouables = hand.hand(joueur.cartes, partie_x.table_partie)
+    joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
+    afficher.afficher_combo(joueur)
 partie_x.vote()
 for joueur in L_joueurs:
     afficher.afficher_solde(joueur)
 partie_x.table_partie.etape +=1
 afficher.afficher_cartes_table(partie_x)
-for i in range (nb_joueurs-1):
-    L_joueurs[i].cartes_jouables = hand.hand(L_joueurs[i].cartes, partie_x.table_partie)
-    L_joueurs[i].combo, L_joueurs[i].cartes_jouee = L_joueurs[i].cartes_jouables.analyse_main()
-    afficher.afficher_combo(L_joueurs[i])
+for joueur in L_joueurs:
+    joueur.cartes_jouables = hand.hand(joueur.cartes, partie_x.table_partie)
+    joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
+    afficher.afficher_combo(joueur)
 gagnant=partie_x.def_gagnant()
 afficher.grand_gagnant(gagnant)
