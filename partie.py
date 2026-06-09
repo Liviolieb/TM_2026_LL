@@ -25,6 +25,7 @@ class partie :
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie)
     def vote(self):
         index_vote=0
+        index_side=-1
         joueur_aug=0
         tapis=False
         mise_tapis=0
@@ -60,6 +61,9 @@ class partie :
                                 afficher.afficher_vote(3,joueur,self.table_partie.mise)
                                 break
                     if vote == joueurs.Joueurs.Vote[3]:
+                        if index_vote != 0:
+                            nouveau_vote =True
+                            joueur_aug = index_vote
                         self.table_partie.main_pot += (self.table_partie.mise - joueur.mise)+joueur.solde
                         joueur.mise = joueur.solde + self.table_partie.mise
                         self.table_partie.mise+=joueur.solde
@@ -72,7 +76,7 @@ class partie :
                                 self.table_partie.main_pot += self.table_partie.mise-joueur.mise
                             else:
                                 self.table_partie.main_pot += mise_tapis-joueur.mise
-                                self.table_partie.side_pot += self.table_partie.mise-mise_tapis
+                                self.table_partie.side_pot[index_side] += self.table_partie.mise-mise_tapis
                             joueur.mise = self.table_partie.mise
                         else:
                             self.table_partie.main_pot += (self.table_partie.mise - joueur.mise)+joueur.solde
@@ -87,6 +91,7 @@ class partie :
                     afficher.afficher_vote(4,joueur,self.table_partie.mise)
                 if joueur.solde == 0:
                     tapis=True
+                    index_side+=1
                     mise_tapis=joueur.mise
                     joueur.joue=False
                 if index_vote == len(self.L_joueurs):
@@ -132,3 +137,8 @@ class partie :
                     points_gagnant=joueur.points
                     joueur_gagnant= joueur
         return (joueur_gagnant)
+    def atribution_pots(self,joueur_gagnant):
+        joueur_gagnant.solde += self.table_partie.main_pot
+        if self.table_partie.side_pot > 0:
+            pass
+            

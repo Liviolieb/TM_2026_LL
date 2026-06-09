@@ -50,3 +50,9 @@ def afficher_combo (joueur):
      for i in range (len(joueur.cartes_jouee)):
         print (joueur.cartes_jouee[i])
      print (hand.hand.liste_main_s[int(joueur.combo)])
+
+def afficher_pots(table):
+    print("le main pot est de",table.main_pot) 
+    if len(table.side_pot) != 0:
+        for i in range (len(table.side_pot)):
+            print ("le side pot numéro",i,"est de",table.side_pot[i])

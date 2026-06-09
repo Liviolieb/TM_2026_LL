@@ -13,6 +13,7 @@ partie_x = partie.partie(L_joueurs)
 for joueur in L_joueurs:
     afficher.afficher_cartes_joueur(joueur)
 partie_x.vote()
+afficher.afficher_pots(partie_x.table_partie)
 for joueur in L_joueurs:
     afficher.afficher_solde(joueur)
 partie_x.table_partie.etape +=1
@@ -22,6 +23,7 @@ for joueur in L_joueurs:
     joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
     afficher.afficher_combo(joueur)
 partie_x.vote()
+afficher.afficher_pots(partie_x.table_partie)
 for joueur in L_joueurs:
     afficher.afficher_solde(joueur)
 partie_x.table_partie.etape +=1
@@ -31,6 +33,7 @@ for joueur in L_joueurs:
     joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
     afficher.afficher_combo(joueur)
 partie_x.vote()
+afficher.afficher_pots(partie_x.table_partie)
 for joueur in L_joueurs:
     afficher.afficher_solde(joueur)
 partie_x.table_partie.etape +=1
@@ -40,4 +43,5 @@ for joueur in L_joueurs:
     joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
     afficher.afficher_combo(joueur)
 gagnant=partie_x.def_gagnant()
+afficher.afficher_pots(partie_x.table_partie)
 afficher.grand_gagnant(gagnant)
