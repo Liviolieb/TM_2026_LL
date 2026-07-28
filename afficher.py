@@ -2,7 +2,7 @@ import joueurs
 import table
 import hand
 
-def afficher_vote (etape,joueur,mise):
+def afficher_vote (etape,joueur):
     if etape == 0:
         print(f"{joueur}, que voulez vous faire")
         print(joueurs.Joueurs.Vote)
@@ -12,10 +12,9 @@ def afficher_vote (etape,joueur,mise):
         x = int(input("Quelle mise voulez vous rajouter? :"))
         return x
     if etape ==2:
-        print(f"vous devez miser au minimum {mise}")
-    if etape==3:
         print ("vous n'avez pas le solde nécessaire")
-    if etape ==4:
+        print(f"vous pouvez miser au maximum {joueur.solde}")
+    if etape ==3:
         print("pas un vote autorisé")
 
 def afficher_cartes_joueur(joueur):
@@ -40,6 +39,7 @@ def nom_solde (i):
 
 def grand_gagnant (gagnant):
      print(f"le grand gagnant est {gagnant.nom}")
+     print(f"il a desormais{gagnant.solde}")
 
 def afficher_solde (joueur):
      print (joueur.nom,"a :")
@@ -53,6 +53,3 @@ def afficher_combo (joueur):
 
 def afficher_pots(table):
     print("le main pot est de",table.main_pot) 
-    if len(table.side_pot) != 0:
-        for i in range (len(table.side_pot)):
-            print ("le side pot numéro",i,"est de",table.side_pot[i])

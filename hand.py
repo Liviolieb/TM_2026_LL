@@ -30,6 +30,7 @@ class hand :
         straight = False
         straight_flush = False
         position = []
+        temp=[]
 
         for i in range (1,14):
             occurence_valeur =self.L_valeur.count(i)
@@ -43,14 +44,11 @@ class hand :
                     cartes_jouee.append(self.cartes_jouables[position[j]])
                 if nb_pair >= 2:
                     main_special= 2
-                    position = [i for i, x in enumerate(self.L_valeur) if x == i]
-                    for j in range (len(position)) :
-                        cartes_jouee.append(self.cartes_jouables[position[j]])
             if occurence_valeur == 3:
                 main_special= 3
                 if pair is False :
                     cartes_jouee =[]
-                position = [i for i, x in enumerate(self.L_valeur) if x == i]
+                position = [j for j, x in enumerate(self.L_valeur) if x == i]
                 for j in range (len(position)) :
                     cartes_jouee.append(self.cartes_jouables[position[j]])
                 three_oak = True
@@ -59,17 +57,17 @@ class hand :
             if occurence_valeur == 4:
                 four_oak = True
                 cartes_jouee=[]
-                position = [i for i, x in enumerate(self.L_valeur) if x == i]
+                position = [j for j, x in enumerate(self.L_valeur) if x == i]
                 for i in range (len(position)) :
                     cartes_jouee.append(self.cartes_jouables[position[i]])
         for j in range (len(self.cartes_jouables))  :
-            if cartes.Cartes(self.cartes_jouables[j]).couleur == "pique" :
+            if self.cartes_jouables[j].couleur == "pique" :
                 L_pique.append(self.cartes_jouables[j])
-            if cartes.Cartes(self.cartes_jouables[j]).couleur == "trefle" :
+            if self.cartes_jouables[j].couleur == "trefle" :
                 L_trefle.append(self.cartes_jouables[j])
-            if cartes.Cartes(self.cartes_jouables[j]).couleur == "carreau" :
+            if self.cartes_jouables[j].couleur == "carreau" :
                 L_carreau.append(self.cartes_jouables[j])
-            if cartes.Cartes(self.cartes_jouables[j]).couleur == "coeur" :
+            if self.cartes_jouables[j].couleur == "coeur" :
                 L_coeur.append(self.cartes_jouables[j])
         if len(L_carreau) >= 5:
             main_special=5

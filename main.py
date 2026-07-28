@@ -43,5 +43,6 @@ for joueur in L_joueurs:
     joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
     afficher.afficher_combo(joueur)
 gagnant=partie_x.def_gagnant()
+partie_x.atribution_pots(gagnant)
 afficher.afficher_pots(partie_x.table_partie)
 afficher.grand_gagnant(gagnant)
