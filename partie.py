@@ -181,17 +181,41 @@ class partie :
             joueur.mise=0
             joueur.solde += pot_j
             return(pot_j)
-    def atribution_pots_execos_1(self,joueur,p):
-            pot_j=0
-            for j in self.L_joueurs :
-                if joueur.mise >= j.mise/p:
-                    pot_j+= j.mise/p
-                    if j != joueur:
-                        j.mise-=j.mise/p
-                else:
-                    j.mise -= joueur.mise
-                    pot_j += joueur.mise
-            joueur.mise -=joueur.mise/p
-            joueur.solde += pot_j
-            return(pot_j)
 
+
+    def atribution_pots_execos_1(self):
+        gagnants = self.def_gagnant()
+        paliers = sorted(set(j.mise for j in self.L_joueurs if j.mise>0))
+        gain=0
+        palier_p=0
+        palier=0
+
+        for palier in paliers:
+            joueurs_p=[j for j in self.L_joueurs if j.mise >= palier]
+            pot=(palier - palier_p)*len(joueurs_p)
+            gagnants_p= [j for j in gagnants if j.mise >= palier]
+            if gagnants_p:
+                part = pot/len(gagnants_p)
+                for gp in gagnants_p:
+                    gp.solde += part
+                gain+=pot
+            elif len(joueurs_p)==1:
+                joueurs_p[0].solde+= pot
+                gain+= pot
+            else:
+                part_remb = pot / len(joueurs_p)
+                for jp in joueurs_p:
+                    jp.solde += part_remb
+                gain += pot
+            palier_p=palier
+        for j in self.L_joueurs:
+            j.mise =0
+        for g in gagnants:
+            g.couche=True
+        return(gain)
+        
+
+
+
+
+        

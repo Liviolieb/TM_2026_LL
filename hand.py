@@ -29,11 +29,7 @@ class hand :
         position = []
         temp=[]
         cartes_couleur=[]
-        s_f= False
-
-
-        
-        
+        s_f= False 
 
         for i in range (1,14):
             occurence_valeur =self.L_valeur.count(i)
@@ -79,6 +75,8 @@ class hand :
             cartes_jouee=paires[0]
         
         L_sorted= sorted(set(self.L_valeur))
+        
+
         n_suite=0
         suite=[]
         suite_C=[]
@@ -123,18 +121,39 @@ class hand :
             flush = True
             cartes_couleur = L_pique
 
-        if straight is True and flush is True:
-            s_f= True
-            for cartes in suite_C:
-                if cartes.couleur != cartes_couleur[0].couleur:
-                    s_f = False
+        if flush is True :
+            c_suite_C=[]
+            c_suite=[]
+            c_valeur=[]
+            nc_suite=0
+            for i in range (len(cartes_couleur)):
+                c_valeur.append(cartes_couleur[i].valeur)
+            c_sorted= sorted(set(c_valeur))
+            for i in range (len(c_sorted)-1):
+                if c_sorted[i]+1== c_sorted[i+1]:
+                    nc_suite += 1
+                    c_suite.append(c_sorted[i])
+                    if nc_suite == 4 :
+                        c_suite.append(c_sorted[i+1])
+                        s_f=True
+                        break
+                else :
+                    nc_suite = 0
+                    c_suite=[]
+            if nc_suite ==4:
+                for i in range (len(c_suite)):
+                    for j in range (len(cartes_couleur)):
+                        if c_suite[i] == cartes_couleur[j].valeur:
+                            c_suite_C.append(cartes_couleur[j])
+                            break
+
                     
         if s_f is True :   
             main_special=8
-            cartes_jouee = suite_C
-            if suite[-1]==13 :
+            cartes_jouee = c_suite_C
+            if c_suite[-1]==13 :
                 main_special= 9
-                cartes_jouee = suite_C
+                cartes_jouee = c_suite_C
         elif len(three_oak) ==2 :
             main_special=6
             cartes_jouee= three_oak[0][1:]+three_oak[1]

@@ -56,15 +56,8 @@ while partie_x.table_partie.main_pot !=0:
         gagnant.couche =True
         partie_x.table_partie.main_pot -= gain
     else:
-            gagnants =partie_x.def_gagnant()
-            p = len(gagnants)
-            for i in range (p):
-                gagnant=gagnants[i]
-                gain=partie_x.atribution_pots_execos_1(gagnant,p)
-                afficher.grand_gagnant(gagnant)
-                gagnant.couche =True
-                partie_x.table_partie.main_pot -= gain
-                p-=1
+            gain=partie_x.atribution_pots_execos_1()
+            partie_x.table_partie.main_pot-= gain
 
     
 
