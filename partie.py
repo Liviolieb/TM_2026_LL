@@ -4,6 +4,7 @@ import hand
 import table
 import afficher
 import random
+import poker
 class partie :
     
     def __init__(self,L_joueurs):
@@ -25,7 +26,7 @@ class partie :
         for carte in self.river_partie:
                 self.pack.remove(carte)
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie)
-    def vote (self):
+    async def vote (self):
         index_vote =0
         nouveau_vote = False
         joueur_aug=0
@@ -38,7 +39,7 @@ class partie :
 
             vote_juste = False
             if joueur.couche is False and joueur.allin is False:
-                vote_x = afficher.afficher_vote(0,joueur)
+                vote_x = await afficher.afficher_vote(0,joueur)
                 for vote in joueurs.Joueurs.Vote :
                     if vote_x == vote :
                         joueur.vote = vote_x
@@ -65,7 +66,7 @@ class partie :
                             joueur.mise = self.table_partie.mise
 
                             while True:
-                                x = afficher.afficher_vote(1,joueur)
+                                x = await afficher.afficher_vote(1,joueur)
                                 if x <= joueur.solde :
                                     joueur.solde -= x
                                     self.table_partie.mise += x
@@ -73,12 +74,12 @@ class partie :
                                     self.table_partie.main_pot += x
                                     break
                                 else:
-                                    afficher.afficher_vote(2,joueur)
+                                    await afficher.afficher_vote(2,joueur)
                         else:
                             self.table_partie.main_pot += (self.table_partie.mise - joueur.mise)+joueur.solde
                             joueur.mise += (self.table_partie.mise - joueur.mise)+joueur.solde
                             joueur.solde =0
-                            afficher.afficher_vote(4,joueur)
+                            await afficher.afficher_vote(4,joueur)
                         index_vote+=1
 
                     if vote == joueurs.Joueurs.Vote[3]:
@@ -105,7 +106,7 @@ class partie :
                         joueur.couche =True
                         index_vote+=1
                 else :
-                    afficher.afficher_vote(3,joueur)
+                    await afficher.afficher_vote(3,joueur)
                 if joueur.solde == 0: 
                     joueur.allin=True
                 

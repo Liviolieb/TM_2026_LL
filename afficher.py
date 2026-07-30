@@ -1,23 +1,44 @@
 import joueurs
 import table
 import hand
+import asyncio
+import poker
+from nicegui import ui
 
-def afficher_vote (etape,joueur):
+
+
+
+
+
+
+
+
+
+
+async def afficher_vote (etape,joueur):
     if etape == 0:
-        print(f"{joueur}, que voulez vous faire")
-        print(joueurs.Joueurs.Vote)
-        vote_x = input(":")
-        return (vote_x)
+        with joueur.jape :
+            ui.label(f"{joueur}, que voulez vous faire")
+            t_vote=ui.toggle(joueurs.Joueurs.Vote)
+            valide= asyncio.Event()
+            ui.button('valider', on_click=valide.set )
+            await valide.wait()
+
+        return (t_vote.value)
     if etape ==1:
-        x = int(input("Quelle mise voulez vous rajouter? :"))
-        return x
+        with joueur.jape:
+            x =ui.number("Quelle mise voulez vous rajouter? :")
+            valide = asyncio.Event()
+            ui.button('valider', on_click=valide.set)
+        await valide.wait()
+
+        return x.value
     if etape ==2:
-        print ("vous n'avez pas le solde nécessaire")
-        print(f"vous pouvez miser au maximum {joueur.solde}")
+        ui.label("vous n'avez pas le solde nécessaire",f"vous pouvez miser au maximum {joueur.solde}")
     if etape ==3:
-        print("pas un vote autorisé")
+        ui.label("pas un vote autorisé")
     if etape ==4:
-        print("vous ne pouvez pas miser plus vous etes désormais en tapis")
+        ui.label("vous ne pouvez pas miser plus vous etes désormais en tapis")
 
 def afficher_cartes_joueur(joueur):
         print (joueur.nom,"a :")
