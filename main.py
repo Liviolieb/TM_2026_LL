@@ -42,7 +42,30 @@ for joueur in L_joueurs:
     joueur.cartes_jouables = hand.hand(joueur.cartes, partie_x.table_partie)
     joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
     afficher.afficher_combo(joueur)
-gagnant=partie_x.def_gagnant()
-partie_x.atribution_pots(gagnant)
+partie_x.vote()
 afficher.afficher_pots(partie_x.table_partie)
-afficher.grand_gagnant(gagnant)
+for joueur in L_joueurs:
+    afficher.afficher_solde(joueur)
+
+gain=0
+while partie_x.table_partie.main_pot !=0:
+    if len(partie_x.def_gagnant()) == 1:
+        gagnant=partie_x.def_gagnant()[0]
+        gain=partie_x.atribution_pots(gagnant)
+        afficher.grand_gagnant(gagnant)
+        gagnant.couche =True
+        partie_x.table_partie.main_pot -= gain
+    else:
+            gagnants =partie_x.def_gagnant()
+            p = len(gagnants)
+            for i in range (p):
+                gagnant=gagnants[i]
+                gain=partie_x.atribution_pots_execos_1(gagnant,p)
+                afficher.grand_gagnant(gagnant)
+                gagnant.couche =True
+                partie_x.table_partie.main_pot -= gain
+                p-=1
+
+    
+
+

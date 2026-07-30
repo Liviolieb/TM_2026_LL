@@ -16,6 +16,8 @@ def afficher_vote (etape,joueur):
         print(f"vous pouvez miser au maximum {joueur.solde}")
     if etape ==3:
         print("pas un vote autorisé")
+    if etape ==4:
+        print("vous ne pouvez pas miser plus vous etes désormais en tapis")
 
 def afficher_cartes_joueur(joueur):
         print (joueur.nom,"a :")
