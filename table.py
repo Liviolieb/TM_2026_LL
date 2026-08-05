@@ -1,6 +1,6 @@
 class Table :
     type_etape=["stage0","flop","turn","river"]
-    def __init__(self, flop, turn, river,mise=0, main_pot = 0, etape =0 ):
+    def __init__(self, flop, turn, river,mise=0, main_pot = 0, etape =0, jape=None):
         self.etape=etape
         self.flop = flop
         self.turn = turn
@@ -8,3 +8,4 @@ class Table :
         self.liste= [flop,turn, river]
         self.mise = mise
         self.main_pot = main_pot
+        self.jape= jape

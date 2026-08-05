@@ -5,6 +5,8 @@ import table
 import afficher
 import random
 import poker
+from nicegui import ui
+from pathlib import Path
 class partie :
     
     def __init__(self,L_joueurs):
@@ -33,7 +35,7 @@ class partie :
         
         while True:
             L_votants = [j for j in self.L_joueurs if not j.couche and not j.allin]
-            if len(L_votants) <= 1 :
+            if len(L_votants) < 1 :
                 return()
             joueur = self.L_joueurs[index_vote]
 
@@ -112,6 +114,13 @@ class partie :
                 
             else:
                 index_vote +=1
+
+            with joueur.jape:
+                joueur.jape.clear()
+                ui.label(f"{joueur.nom} : solde {joueur.solde}" )
+                with ui.row():
+                    for i in range (len(joueur.cartes)):
+                        ui.image(Path('cartes_j')/str(joueur.cartes[i].couleur)/f"{joueur.cartes[i].valeur}.png")
 
             if nouveau_vote is True and joueur_aug == index_vote :
                     index_vote=0

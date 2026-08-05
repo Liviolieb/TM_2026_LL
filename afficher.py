@@ -4,6 +4,7 @@ import hand
 import asyncio
 import poker
 from nicegui import ui
+from pathlib import Path
 
 
 
@@ -40,16 +41,29 @@ async def afficher_vote (etape,joueur):
     if etape ==4:
         ui.label("vous ne pouvez pas miser plus vous etes désormais en tapis")
 
-def afficher_cartes_joueur(joueur):
-        print (joueur.nom,"a :")
-        for carte in joueur.cartes:
-            print (carte)
+def afficher_cartes_joueur(partie):
+        for joueur in partie.L_joueurs:
+                joueur.cartes_jouables = hand.hand(joueur.cartes, partie.table_partie)
+                joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
+        for j in partie.L_joueurs:
+            j.jape.clear()
+            with j.jape:
+                ui.label(f"{j.nom} : solde {j.solde}" )
+                row= ui.row()
+                with row:
+                    for i in range (len(j.cartes)):
+                        ui.image(Path('cartes_j')/str(j.cartes[i].couleur)/f"{j.cartes[i].valeur}.png").style('width: 120px')
+                ui.label (hand.hand.liste_main_s[int(j.combo)])
+                
 
 def afficher_cartes_table(partie):
-        print(table.Table.type_etape[partie.table_partie.etape])
-        for i in range (partie.table_partie.etape):
-            for j in range (len(partie.table_partie.liste[i])):
-                print (partie.table_partie.liste[i][j])
+        partie.table_partie.jape.clear()
+        with partie.table_partie.jape:
+            ui.label(f"le main pot est : {partie.table_partie.main_pot}")
+            ui.label(table.Table.type_etape[partie.table_partie.etape])
+            for i in range (partie.table_partie.etape):
+                for j in range (len(partie.table_partie.liste[i])):
+                    ui.image(Path('cartes_j')/str(partie.table_partie.liste[i][j].couleur)/f"{partie.table_partie.liste[i][j].valeur}.png").style('width: 120px')
 
 def nb_de_j ():
     x= int(input("Combien de joueurs :"))
@@ -61,8 +75,11 @@ def nom_solde (i):
     return (nom_joueur_x,solde_joueur_x)
 
 def grand_gagnant (gagnant):
-     print(f"le grand gagnant est {gagnant.nom}")
-     print(f"il a desormais{gagnant.solde}")
+    ui.label(f"le grand gagnant est {gagnant.nom}")
+    with ui.row():
+        for i in range (len(gagnant.cartes.jouee)):
+            ui.image(Path('cartes_j')/str(gagnant.cartes.jouee[i].couleur)/f"{gagnant.cartes.jouee[i].valeur}.png").style('width: 120px')
+    ui.label (hand.hand.liste_main_s[int(gagnant.combo)])
 
 def afficher_solde (joueur):
      print (joueur.nom,"a :")
@@ -73,6 +90,3 @@ def afficher_combo (joueur):
      for i in range (len(joueur.cartes_jouee)):
         print (joueur.cartes_jouee[i])
      print (hand.hand.liste_main_s[int(joueur.combo)])
-
-def afficher_pots(table):
-    print("le main pot est de",table.main_pot) 

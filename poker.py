@@ -1,6 +1,9 @@
 import partie
 import joueurs
+import afficher
+import hand
 from nicegui import ui
+from pathlib import Path
 
 partie_x =None
 @ui.page('/')
@@ -56,11 +59,52 @@ async def jeu():
     with affichage:
                 ui.label("Partie créée !")
                 for j in partie_x.L_joueurs:
-                    j.jape = ui.card()
-                    with j.jape:
-                        ui.label(f"{j.nom} : solde {j.solde}, cartes {[str(c) for c in j.cartes]}")
+                            j.jape = ui.card()
+                afficher.afficher_cartes_joueur(partie_x)
+                partie_x.table_partie.jape = ui.card()
+                afficher.afficher_cartes_table(partie_x)
+                     
     await ui.context.client.connected()
     await partie_x.vote()
+
+    partie_x.table_partie.etape +=1
+    afficher.afficher_cartes_table(partie_x)
+    afficher.afficher_cartes_joueur(partie_x)
+    await partie_x.vote()
+
+    partie_x.table_partie.etape +=1
+    afficher.afficher_cartes_table(partie_x)
+    afficher.afficher_cartes_joueur(partie_x)
+    await partie_x.vote()
+
+    partie_x.table_partie.etape +=1
+    afficher.afficher_cartes_table(partie_x)
+    afficher.afficher_cartes_joueur(partie_x)
+    await partie_x.vote()
+
+    ui.navigate.to('/gagnant')
+
+@ui.page('/gagnant')
+def gagnant() :
+    if not partie_x:
+             ui.navigate.to('/')
+             return
+    gain=0
+    while partie_x.table_partie.main_pot !=0:
+        if len(partie_x.def_gagnant()) == 1:
+            gagnant=partie_x.def_gagnant()[0]
+            gain=partie_x.atribution_pots(gagnant)
+            afficher.grand_gagnant(gagnant)
+            gagnant.couche =True
+            partie_x.table_partie.main_pot -= gain
+        else:
+                gain=partie_x.atribution_pots_execos_1()
+                partie_x.table_partie.main_pot-= gain
+
+
+
+
+    
 
 
 ui.run()

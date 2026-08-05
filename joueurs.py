@@ -1,6 +1,6 @@
 class Joueurs :
     Vote =["aug","suivre","coucher","tapis"]
-    def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=0, cartes_jouables=None, cartes_jouee=None, combo =None,couche=False,allin=False, points=0, jape=None):
+    def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=0, cartes_jouables=None, cartes_jouee=None, combo =0,couche=False,allin=False, points=0, jape=None):
         self.nom = nom
         self.solde=solde
         self.cartes = cartes
