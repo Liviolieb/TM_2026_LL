@@ -4,7 +4,7 @@ import hand
 import table
 import afficher
 import random
-import poker
+import poker_copie
 from nicegui import ui
 from pathlib import Path
 class partie :
@@ -118,9 +118,10 @@ class partie :
             with joueur.jape:
                 joueur.jape.clear()
                 ui.label(f"{joueur.nom} : solde {joueur.solde}" )
+                ui.label(f"mise : {joueur.mise}")
                 with ui.row():
                     for i in range (len(joueur.cartes)):
-                        ui.image(Path('cartes_j')/str(joueur.cartes[i].couleur)/f"{joueur.cartes[i].valeur}.png")
+                        ui.image(Path('cartes_j')/str(joueur.cartes[i].couleur)/f"{joueur.cartes[i].valeur}.png").style('width: 120px')
 
             if nouveau_vote is True and joueur_aug == index_vote :
                     index_vote=0

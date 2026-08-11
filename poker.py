@@ -9,7 +9,7 @@ partie_x =None
 @ui.page('/')
 def accueil():
     ui.label("Configuration de la partie").style('font-size: 1.5em')
-    nb_joueurs_input = ui.number('Combien de joueurs :', value=3, min=2, max=10, format='%d')
+    nb_joueurs_input = ui.number('Combien de joueurs :', value=3, min=2, max=10)
 
     champ_joueurs = ui.column()
     champs = [] 
@@ -22,7 +22,7 @@ def accueil():
             for i in range(nb):
                 with ui.row():
                     input_nom = ui.input(f"Nom du joueur {i + 1}")
-                    input_solde = ui.number(f"Solde du joueur {i + 1}", value=1000)
+                    input_solde = ui.number(f"Solde du joueur {i + 1}", value=1000,step=10)
                 champs.append((input_nom, input_solde))
 
     ui.button("Valider le nombre de joueurs", on_click=generer_champs)

@@ -28,7 +28,7 @@ async def afficher_vote (etape,joueur):
         return (t_vote.value)
     if etape ==1:
         with joueur.jape:
-            x =ui.number("Quelle mise voulez vous rajouter? :")
+            x =ui.number("Quelle mise voulez vous rajouter? :",value =10,step=10)
             valide = asyncio.Event()
             ui.button('valider', on_click=valide.set)
         await valide.wait()
@@ -49,6 +49,7 @@ def afficher_cartes_joueur(partie):
             j.jape.clear()
             with j.jape:
                 ui.label(f"{j.nom} : solde {j.solde}" )
+                ui.label(f"mise : {j.mise}")
                 row= ui.row()
                 with row:
                     for i in range (len(j.cartes)):
@@ -77,8 +78,8 @@ def nom_solde (i):
 def grand_gagnant (gagnant):
     ui.label(f"le grand gagnant est {gagnant.nom}")
     with ui.row():
-        for i in range (len(gagnant.cartes.jouee)):
-            ui.image(Path('cartes_j')/str(gagnant.cartes.jouee[i].couleur)/f"{gagnant.cartes.jouee[i].valeur}.png").style('width: 120px')
+        for i in range (len(gagnant.cartes_jouee)):
+            ui.image(Path('cartes_j')/str(gagnant.cartes_jouee[i].couleur)/f"{gagnant.cartes_jouee[i].valeur}.png").style('width: 120px')
     ui.label (hand.hand.liste_main_s[int(gagnant.combo)])
 
 def afficher_solde (joueur):
