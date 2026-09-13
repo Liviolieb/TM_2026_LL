@@ -1,10 +1,8 @@
 import joueurs
 import cartes
-import hand
 import table
 import afficher
 import random
-import poker_copie
 from nicegui import ui
 from pathlib import Path
 class partie :
@@ -58,6 +56,7 @@ class partie :
                             joueur.mise += (self.table_partie.mise - joueur.mise)+joueur.solde
                             joueur.solde =0
                         index_vote+=1
+                        joueur.zone_jeu.refresh(5)
                     if vote == joueurs.Joueurs.Vote[0]:
                         if index_vote != 0:
                             nouveau_vote =True
@@ -83,6 +82,7 @@ class partie :
                             joueur.solde =0
                             await afficher.afficher_vote(4,joueur)
                         index_vote+=1
+                        joueur.zone_jeu.refresh(5)
 
                     if vote == joueurs.Joueurs.Vote[3]:
                         if joueur.solde - (self.table_partie.mise-joueur.mise) >= 0:
@@ -97,16 +97,19 @@ class partie :
                             self.table_partie.mise= joueur.mise
                             joueur.solde =0
                             index_vote+=1
+                            joueur.zone_jeu.refresh(5)
                         else:
                             self.table_partie.main_pot += (self.table_partie.mise - joueur.mise)+joueur.solde
                             joueur.mise += (self.table_partie.mise - joueur.mise)+joueur.solde
                             joueur.solde =0
                             index_vote+=1
+                            joueur.zone_jeu.refresh(5)
     
                         
                     if vote == joueurs.Joueurs.Vote[2]:
                         joueur.couche =True
                         index_vote+=1
+                        joueur.zone_jeu.refresh(5)
                 else :
                     await afficher.afficher_vote(3,joueur)
                 if joueur.solde == 0: 
@@ -114,15 +117,11 @@ class partie :
                 
             else:
                 index_vote +=1
+                joueur.zone_jeu.refresh(5)
 
-            with joueur.jape:
-                joueur.jape.clear()
-                ui.label(f"{joueur.nom} : solde {joueur.solde}" )
-                ui.label(f"mise : {joueur.mise}")
-                with ui.row():
-                    for i in range (len(joueur.cartes)):
-                        ui.image(Path('cartes_j')/str(joueur.cartes[i].couleur)/f"{joueur.cartes[i].valeur}.png").style('width: 120px')
-
+            for joueurr in self.L_joueurs:
+                joueurr.zone_entete.refresh()
+            
             if nouveau_vote is True and joueur_aug == index_vote :
                     index_vote=0
                     nouveau_vote = False

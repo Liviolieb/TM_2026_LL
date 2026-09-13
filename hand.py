@@ -15,7 +15,7 @@ class hand :
         self.cartes_jouables = cartes_jouables
         
         
-    def analyse_main (self):
+    def analyse_main (self):  #fonction d'analyse du combo 
         main_special= 0
         cartes_jouee=[]
         L_pique=[]
@@ -31,24 +31,24 @@ class hand :
         cartes_couleur=[]
         s_f= False 
 
-        for i in range (1,14):
+        for i in range (1,14): #boucle sur les 14 différentes cartes pour vérifier combien de fois on les retrouves dans notre main
             occurence_valeur =self.L_valeur.count(i)
-            if occurence_valeur == 2:
+
+            if occurence_valeur == 2: # si deux fois dans notre main on rajoute les deux cartes dans une liste (temp) qui est ensuite elle même ajoutée dans une liste (paires)
                 position = [j for j, x in enumerate(self.L_valeur) if x == i]
                 for j in range (len(position)) :
                     temp.append(self.cartes_jouables[position[j]])
                 paires.append(temp)
                 temp=[]
  
-            if occurence_valeur == 3:
-
+            if occurence_valeur == 3:# si trois fois dans notre main on rajoute les trois cartes dans une liste (temp) qui est ensuite elle même ajoutée dans une liste (three_oak)
                 position = [j for j, x in enumerate(self.L_valeur) if x == i]
                 for j in range (len(position)) :
                     temp.append(self.cartes_jouables[position[j]])
                 three_oak.append(temp)
                 temp=[]
 
-            if occurence_valeur == 4:
+            if occurence_valeur == 4: # si quatres fois dans notre main on ajoutes ces cartes dans une liste et on peut sortir de la fonction car aucun autre combo plus fort n'est possible
                 main_special=7
                 cartes_jouee=[]
                 position = [j for j, x in enumerate(self.L_valeur) if x == i]
@@ -56,11 +56,12 @@ class hand :
                     cartes_jouee.append(self.cartes_jouables[position[i]])
                 return(main_special,cartes_jouee)
         
-        if len(three_oak) ==2 :
+        if len(three_oak) ==2 : # si on a deux fois une liste de 3 même cartes alors on aura un full composé des deux première cartes de la première liste qui ont une valeur plus petite (car on ajoute les cartes de 1 à 14) et de la deuxieme liste
             main_special=6
             cartes_jouee= three_oak[0][1:]+three_oak[1]
             return(main_special,cartes_jouee)
-        elif len(three_oak)==1 and len(paires) >= 1:
+        
+        elif len(three_oak)==1 and len(paires) >= 1: #si on a 
             main_special=6
             cartes_jouee= three_oak[0] + paires[-1]
             return(main_special,cartes_jouee)

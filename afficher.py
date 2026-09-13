@@ -2,7 +2,6 @@ import joueurs
 import table
 import hand
 import asyncio
-import poker
 from nicegui import ui
 from pathlib import Path
 
@@ -18,43 +17,30 @@ from pathlib import Path
 
 async def afficher_vote (etape,joueur):
     if etape == 0:
-        with joueur.jape :
-            ui.label(f"{joueur}, que voulez vous faire")
-            t_vote=ui.toggle(joueurs.Joueurs.Vote)
-            valide= asyncio.Event()
-            ui.button('valider', on_click=valide.set )
-            await valide.wait()
-
-        return (t_vote.value)
+        joueur.a_vote = asyncio.Event()
+        joueur.zone_jeu.refresh(0)
+        await joueur.a_vote.wait()
+        return joueur.reponse_vote
+    
     if etape ==1:
-        with joueur.jape:
-            x =ui.number("Quelle mise voulez vous rajouter? :",value =10,step=10)
-            valide = asyncio.Event()
-            ui.button('valider', on_click=valide.set)
-        await valide.wait()
-
-        return x.value
+        joueur.a_vote = asyncio.Event()
+        joueur.zone_jeu.refresh(1)
+        await joueur.a_vote.wait()
+        return joueur.mise_v
+    
     if etape ==2:
-        ui.label("vous n'avez pas le solde nécessaire",f"vous pouvez miser au maximum {joueur.solde}")
+        joueur.zone_jeu.refresh(2)
     if etape ==3:
-        ui.label("pas un vote autorisé")
+        joueur.zone_jeu.refresh(3)
     if etape ==4:
-        ui.label("vous ne pouvez pas miser plus vous etes désormais en tapis")
+        joueur.zone_jeu.refresh(4)
 
 def afficher_cartes_joueur(partie):
         for joueur in partie.L_joueurs:
                 joueur.cartes_jouables = hand.hand(joueur.cartes, partie.table_partie)
                 joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
         for j in partie.L_joueurs:
-            j.jape.clear()
-            with j.jape:
-                ui.label(f"{j.nom} : solde {j.solde}" )
-                ui.label(f"mise : {j.mise}")
-                row= ui.row()
-                with row:
-                    for i in range (len(j.cartes)):
-                        ui.image(Path('cartes_j')/str(j.cartes[i].couleur)/f"{j.cartes[i].valeur}.png").style('width: 120px')
-                ui.label (hand.hand.liste_main_s[int(j.combo)])
+            j.zone_entete.refresh()
                 
 
 def afficher_cartes_table(partie):
@@ -65,6 +51,11 @@ def afficher_cartes_table(partie):
             for i in range (partie.table_partie.etape):
                 for j in range (len(partie.table_partie.liste[i])):
                     ui.image(Path('cartes_j')/str(partie.table_partie.liste[i][j].couleur)/f"{partie.table_partie.liste[i][j].valeur}.png").style('width: 120px')
+        
+        for j in partie.L_joueurs:
+            if j.zone_entete is not None:
+                j.zone_entete.refresh()
+        
 
 def nb_de_j ():
     x= int(input("Combien de joueurs :"))
