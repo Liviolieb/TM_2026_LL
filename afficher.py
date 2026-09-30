@@ -38,7 +38,8 @@ async def afficher_vote (etape,joueur):
 def afficher_cartes_joueur(partie):
         for joueur in partie.L_joueurs:
                 joueur.cartes_jouables = hand.hand(joueur.cartes, partie.table_partie)
-                joueur.combo, joueur.cartes_jouee = joueur.cartes_jouables.analyse_main()
+                joueur.combo, joueur.cartes_combo, joueur.cartes_kicker = joueur.cartes_jouables.analyse_main()
+                joueur.cartes_jouee = joueur.cartes_combo+joueur.cartes_kicker
         for j in partie.L_joueurs:
             j.zone_entete.refresh()
                 

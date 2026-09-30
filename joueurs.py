@@ -1,7 +1,7 @@
 import asyncio
 class Joueurs :
     Vote =["aug","suivre","coucher","tapis"]
-    def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=0, cartes_jouables=None, cartes_jouee=None, combo =0,couche=False,allin=False, points=0, jape=None,zone_entete = None,zone_jeu = None,reponse_vote = None,mise_v=None):
+    def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=0, cartes_jouables=None, combo =0,couche=False,allin=False, points=0, jape=None,zone_entete = None,zone_jeu = None,reponse_vote = None,mise_v=None):
         self.nom = nom
         self.solde=solde
         self.cartes = cartes
@@ -11,7 +11,9 @@ class Joueurs :
         self.cartes_jouables = cartes_jouables
         self.combo = combo
         self.couche = couche
-        self.cartes_jouee = cartes_jouee
+        self.cartes_combo = []
+        self.cartes_kicker = []
+        self.cartes_jouee=self.cartes_kicker+self.cartes_combo
         self.allin = allin
         self.points= points
         self.jape= jape
@@ -21,5 +23,6 @@ class Joueurs :
         self.reponse_vote = reponse_vote
         self.a_vote = asyncio.Event()
         self.mise_v=mise_v
+        self.cle_gagnant=[]
     def __str__ (self):
         return self.nom

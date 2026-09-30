@@ -16,10 +16,11 @@ def accueil():
     champs = [] 
 
     def generer_champs():
-        bouton_j.clear()
+        bouton_j.delete()
         champ_joueurs.clear()
         champs.clear()
         nb = int(nb_joueurs_input.value)
+        nb_joueurs_input.delete()
         with champ_joueurs:
             for i in range(nb):
                 with ui.row():
@@ -62,7 +63,7 @@ async def jeu():
         partie_x.table_partie.jape = ui.card()
         afficher.afficher_cartes_table(partie_x)
         for j in partie_x.L_joueurs:
-            ui.link(j.nom,f'/jeu/{j.nom}').props('target=_blank')
+            ui.button(j.nom, on_click=lambda j=j:ui.navigate.to(f'/jeu/{j.nom}', new_tab=True))
                      
     await ui.context.client.connected()
     for j in partie_x.L_joueurs:
@@ -84,12 +85,28 @@ async def jeu():
     afficher.afficher_cartes_joueur(partie_x)
     await partie_x.vote()
 
-    ui.navigate.to('/gagnant')
+    gain=0
+    gagnant=None
+    
+    while partie_x.table_partie.main_pot !=0:
+        if len(partie_x.def_gagnant()) == 1:
+            gagnant=partie_x.def_gagnant()[0]
+            gain=partie_x.atribution_pots(gagnant)
+            gagnant.couche =True
+            partie_x.table_partie.main_pot -= gain
+        else:
+            partie_x.L_gagnants=partie_x.def_gagnant()
+            gain=partie_x.atribution_pots_execos_1()
+            partie_x.table_partie.main_pot-= gain
+
+    for j in partie_x.L_joueurs:
+            j.zone_jeu.refresh(6)
 
 @ui.page('/jeu/{j}')
 async def jeu_j(j: str):
     if partie_x is None:
         ui.label("Aucune partie en cours.")
+        ui.navigate.to('/')
         return
     moi = next((x for x in partie_x.L_joueurs if x.nom == j), None)
     if moi is None:
@@ -102,6 +119,10 @@ async def jeu_j(j: str):
         with moi.jape:
             ui.label(f"{moi.nom} : solde {moi.solde}" )
             ui.label(f"mise : {moi.mise}")
+            if moi.allin is True:
+                ui.label("Vous êtes en tapis")
+            if moi.couche is True:
+                ui.label("Vous êtes couché")
             row= ui.row()
             with row:
                 for i in range (len(moi.cartes)):
@@ -110,9 +131,10 @@ async def jeu_j(j: str):
             ui.label(f"le main pot est : {partie_x.table_partie.main_pot}")
             ui.label(f"les autres personnes ont misé : {partie_x.table_partie.mise}")
             ui.label(table.Table.type_etape[partie_x.table_partie.etape])
-            for i in range (partie_x.table_partie.etape):
-                for j in range (len(partie_x.table_partie.liste[i])):
-                    ui.image(Path('cartes_j')/str(partie_x.table_partie.liste[i][j].couleur)/f"{partie_x.table_partie.liste[i][j].valeur}.png").style('width: 120px')
+            with ui.row():
+                for i in range (partie_x.table_partie.etape):
+                    for j in range (len(partie_x.table_partie.liste[i])):
+                        ui.image(Path('cartes_j')/str(partie_x.table_partie.liste[i][j].couleur)/f"{partie_x.table_partie.liste[i][j].valeur}.png").style('width: 120px')
 
 
 
@@ -148,7 +170,27 @@ async def jeu_j(j: str):
             ui.label(" En attente des autres joueurs...")
             ui.spinner()
         if etape == 6:
-            ui.navigate.to('/gagnant')
+            if len(partie_x.L_gagnants)== 1 :
+                ui.label(f"le grand gagnant est {partie_x.L_gagnants[0].nom}")
+                with ui.row():
+                    for i in range (len(partie_x.L_gagnants[0].cartes_jouee)):
+                        ui.image(Path('cartes_j')/str(partie_x.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie_x.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
+                ui.label (hand.hand.liste_main_s[int(partie_x.L_gagnants[0].combo)])
+            else:
+                ui.label("Les gagnants sont : " )
+                for j in partie_x.L_gagnants:
+                    with ui.row():
+                        ui.label(j.nom)
+                for j in partie_x.L_gagnants:
+                    ui.label(f"{j.nom} avait :")
+                    with ui.row():
+                        for i in range (len(j.cartes_jouee)):
+                            ui.image(Path('cartes_j')/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
+                    ui.label (hand.hand.liste_main_s[int(j.combo)])
+            def rejouer ():
+                pass
+            ui.button('rejouer', on_click = rejouer)
+            ui.button('nouvelle partie', on_click =lambda :ui.navigate.to('/'))
 
     moi.zone_entete=zone_entete
     moi.zone_jeu=zone_jeu
@@ -166,25 +208,45 @@ async def jeu_j(j: str):
 @ui.page('/gagnant')
 def gagnant() :
     if not partie_x:
-             ui.navigate.to('/')
-             return
+            ui.navigate.to('/')
+            return
     gain=0
+    gagnant=None
+    L_gagnants=[]
+
     while partie_x.table_partie.main_pot !=0:
         if len(partie_x.def_gagnant()) == 1:
             gagnant=partie_x.def_gagnant()[0]
             gain=partie_x.atribution_pots(gagnant)
-            afficher.grand_gagnant(gagnant)
             gagnant.couche =True
             partie_x.table_partie.main_pot -= gain
         else:
-                gain=partie_x.atribution_pots_execos_1()
-                partie_x.table_partie.main_pot-= gain
+            L_gagnants=partie_x.def_gagnant()
+            gain=partie_x.atribution_pots_execos_1()
+            partie_x.table_partie.main_pot-= gain
     def rejouer ():
+        global partie_x
         partie_x= partie.partie(partie_x.L_joueurs)
         ui.navigate.to('/jeu')
-
+    if gagnant :
+        ui.label(f"le grand gagnant est {gagnant.nom}")
+        with ui.row():
+            for i in range (len(gagnant.cartes_jouee)):
+                ui.image(Path('cartes_j')/str(gagnant.cartes_jouee[i].couleur)/f"{gagnant.cartes_jouee[i].valeur}.png").style('width: 120px')
+        ui.label (hand.hand.liste_main_s[int(gagnant.combo)])
+    else:
+        ui.label("Les gagnants sont : " )
+        for j in L_gagnants:
+            with ui.row():
+                ui.label(j.nom)
+        for j in L_gagnants:
+            ui.label(f"{j.nom} avait :")
+            with ui.row():
+                for i in range (len(j.cartes_jouee)):
+                    ui.image(Path('cartes_j')/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
+            ui.label (hand.hand.liste_main_s[int(j.combo)])
     ui.button('rejouer', on_click = rejouer)
-    ui.button('nouvelle partie', on_click =ui.navigate.to('/'))
+    ui.button('nouvelle partie', on_click =lambda :ui.navigate.to('/'))
 
 
 
