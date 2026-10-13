@@ -4,11 +4,13 @@ import table
 import afficher
 import random
 class partie :
-    
+    Grosse_blind= 20
+    Petite_blind=10
     def __init__(self,L_joueurs):
         self.pack = cartes.Cartes.creer_pack()
         self.L_joueurs = L_joueurs
         self.L_gagnants= []
+                
         for joueur in L_joueurs:
             joueur.mise=0
             if joueur.solde <=0:
@@ -17,6 +19,7 @@ class partie :
                 continue
             joueur.couche=False
             joueur.allin=False
+            joueur.compte=False
             cartes_x= random.sample(self.pack, 2)
             for carte in cartes_x:
                 self.pack.remove(carte)
@@ -32,6 +35,30 @@ class partie :
                 self.pack.remove(carte)
         self.L_actifs =[j for j in self.L_joueurs if not j.couche]
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie)
+
+        if len(self.L_actifs) >=2:
+            pb ,gb = random.sample(self.L_actifs,2)
+            if pb.solde >self.Petite_blind:
+                pb.mise = self.Petite_blind
+                pb.solde -= self.Petite_blind 
+            else:
+                pb.mise = pb.solde
+                pb.solde=0
+                pb.allin=True
+
+            if gb.solde >self.Grosse_blind:
+                gb.mise = self.Grosse_blind
+                gb.solde -= self.Grosse_blind 
+            else:
+                gb.mise = gb.solde
+                gb.solde=0
+                gb.allin=True
+
+            if gb.mise >= pb.mise:
+                self.table_partie.mise = gb.mise
+            else:
+                self.table_partie.mise = pb.mise
+            self.table_partie.main_pot += pb.mise + gb.mise
     async def vote (self):
         index_vote =0
         nouveau_vote = False
@@ -123,10 +150,12 @@ class partie :
                 
             else:
                 index_vote +=1
-                joueur.zone_jeu.refresh(5)
+                if joueur.zone_jeu:
+                    joueur.zone_jeu.refresh(5)
 
-            for joueurr in self.L_joueurs:
-                joueurr.zone_entete.refresh()
+            for j in self.L_joueurs:
+                if j.zone_entete:
+                    j.zone_entete.refresh()
             
             if nouveau_vote is True and joueur_aug == index_vote :
                     index_vote=0
@@ -143,7 +172,9 @@ class partie :
                     break
         
     def def_gagnant (self,joueurs=None) :
-        self.L_actifs =joueurs if joueurs is not None else [j for j in self.L_joueurs if not j.couche]
+        self.L_actifs =joueurs if joueurs is not None else [j for j in self.L_joueurs if not j.couche and not j.compte and j.mise>0]
+        if not self.L_actifs:
+            return[]
         joueur_gagnant = None
         if len(self.L_actifs)==1:
             joueur_gagnant=self.L_actifs[0]
@@ -228,7 +259,7 @@ class partie :
 
         for palier in paliers:
             contributeurs=[j for j in self.L_joueurs if j.mise >= palier]
-            joueurs_p=[j for j in contributeurs if j.couche is False]
+            joueurs_p=[j for j in contributeurs if j.compte is False and j.couche is False]
             pot=(palier - palier_p)*len(contributeurs)
             if not joueurs_p:
                 part_remb = pot / len(contributeurs)
@@ -258,7 +289,7 @@ class partie :
         for j in self.L_joueurs:
             j.mise =0
         for g in gagnants:
-            g.couche=True
+            g.compte=True
         return(gain)
         
 

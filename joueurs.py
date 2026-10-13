@@ -11,6 +11,7 @@ class Joueurs :
         self.cartes_jouables = cartes_jouables
         self.combo = combo
         self.couche = couche
+        self.compte = False
         self.cartes_combo = []
         self.cartes_kicker = []
         self.cartes_jouee=self.cartes_kicker+self.cartes_combo

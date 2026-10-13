@@ -34,6 +34,11 @@ def accueil():
 
     def demarrer_partie():
         global partie_x
+        if partie_x is not None and partie_x.table_partie.main_pot != 0:
+            with resultat:
+                resultat.clear()
+                ui.label("Une partie est déjà en cours. Rejoins-la plutôt que d'en créer une nouvelle.")
+            return
         if not champs:
             with resultat:
                 resultat.clear()
@@ -61,27 +66,28 @@ async def jeu():
     with affichage:
         ui.label("Partie créée !")
         partie_x.table_partie.jape = ui.card()
-        afficher.afficher_cartes_table(partie_x)
+        afficher.afficher_cartes_table(partie_x,0)
         for j in partie_x.L_joueurs:
             ui.button(j.nom, on_click=lambda j=j:ui.navigate.to(f'/jeu/{j.nom}', new_tab=True))
                      
     await ui.context.client.connected()
     for j in partie_x.L_joueurs:
-        await j.pret.wait() 
+        if not j.couche:
+            await j.pret.wait() 
     await partie_x.vote()
 
     partie_x.table_partie.etape +=1
-    afficher.afficher_cartes_table(partie_x)
+    afficher.afficher_cartes_table(partie_x,0)
     afficher.afficher_cartes_joueur(partie_x)
     await partie_x.vote()
 
     partie_x.table_partie.etape +=1
-    afficher.afficher_cartes_table(partie_x)
+    afficher.afficher_cartes_table(partie_x,0)
     afficher.afficher_cartes_joueur(partie_x)
     await partie_x.vote()
 
     partie_x.table_partie.etape +=1
-    afficher.afficher_cartes_table(partie_x)
+    afficher.afficher_cartes_table(partie_x,0)
     afficher.afficher_cartes_joueur(partie_x)
     await partie_x.vote()
 
@@ -92,14 +98,16 @@ async def jeu():
         if len(partie_x.def_gagnant()) == 1:
             gagnant=partie_x.def_gagnant()[0]
             gain=partie_x.atribution_pots(gagnant)
-            gagnant.couche =True
+            gagnant.compte =True
             partie_x.table_partie.main_pot -= gain
+            partie_x.L_gagnants=[gagnant]
         else:
             partie_x.L_gagnants=partie_x.def_gagnant()
             gain=partie_x.atribution_pots_execos_1()
             partie_x.table_partie.main_pot-= gain
-
+    afficher.afficher_cartes_table(partie_x,1)
     for j in partie_x.L_joueurs:
+        if j.zone_jeu:
             j.zone_jeu.refresh(6)
 
 @ui.page('/jeu/{j}')
@@ -111,6 +119,7 @@ async def jeu_j(j: str):
     moi = next((x for x in partie_x.L_joueurs if x.nom == j), None)
     if moi is None:
             ui.label(f"Joueur '{j}' inconnu.")
+            ui.navigate.to('/jeu')
             return
     
     @ui.refreshable
@@ -158,7 +167,7 @@ async def jeu_j(j: str):
             
         
         if etape ==2:
-            ui.label("vous n'avez pas le solde nécessaire",f"vous pouvez miser au maximum {moi.solde}")
+            ui.label(f"vous n'avez pas le solde nécessaire, vous pouvez miser au maximum {moi.solde}")
 
         if etape ==3:
             ui.label("pas un vote autorisé")
@@ -171,7 +180,10 @@ async def jeu_j(j: str):
             ui.spinner()
         if etape == 6:
             if len(partie_x.L_gagnants)== 1 :
-                ui.label(f"le grand gagnant est {partie_x.L_gagnants[0].nom}")
+                if moi.nom == partie_x.L_gagnants[0].nom:
+                   ui.label(f"Vous etes le grand gagnant, felicitations") 
+                else:
+                    ui.label(f"le grand gagnant est {partie_x.L_gagnants[0].nom}")
                 with ui.row():
                     for i in range (len(partie_x.L_gagnants[0].cartes_jouee)):
                         ui.image(Path('cartes_j')/str(partie_x.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie_x.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
@@ -187,10 +199,9 @@ async def jeu_j(j: str):
                         for i in range (len(j.cartes_jouee)):
                             ui.image(Path('cartes_j')/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
                     ui.label (hand.hand.liste_main_s[int(j.combo)])
-            def rejouer ():
-                pass
-            ui.button('rejouer', on_click = rejouer)
-            ui.button('nouvelle partie', on_click =lambda :ui.navigate.to('/'))
+            ui.button('Rejouer', on_click =lambda :ui.navigate.to('/'))
+
+
 
     moi.zone_entete=zone_entete
     moi.zone_jeu=zone_jeu
@@ -200,58 +211,5 @@ async def jeu_j(j: str):
             
     await ui.context.client.connected()
     moi.pret.set()
-                    
-
-
-     
-
-@ui.page('/gagnant')
-def gagnant() :
-    if not partie_x:
-            ui.navigate.to('/')
-            return
-    gain=0
-    gagnant=None
-    L_gagnants=[]
-
-    while partie_x.table_partie.main_pot !=0:
-        if len(partie_x.def_gagnant()) == 1:
-            gagnant=partie_x.def_gagnant()[0]
-            gain=partie_x.atribution_pots(gagnant)
-            gagnant.couche =True
-            partie_x.table_partie.main_pot -= gain
-        else:
-            L_gagnants=partie_x.def_gagnant()
-            gain=partie_x.atribution_pots_execos_1()
-            partie_x.table_partie.main_pot-= gain
-    def rejouer ():
-        global partie_x
-        partie_x= partie.partie(partie_x.L_joueurs)
-        ui.navigate.to('/jeu')
-    if gagnant :
-        ui.label(f"le grand gagnant est {gagnant.nom}")
-        with ui.row():
-            for i in range (len(gagnant.cartes_jouee)):
-                ui.image(Path('cartes_j')/str(gagnant.cartes_jouee[i].couleur)/f"{gagnant.cartes_jouee[i].valeur}.png").style('width: 120px')
-        ui.label (hand.hand.liste_main_s[int(gagnant.combo)])
-    else:
-        ui.label("Les gagnants sont : " )
-        for j in L_gagnants:
-            with ui.row():
-                ui.label(j.nom)
-        for j in L_gagnants:
-            ui.label(f"{j.nom} avait :")
-            with ui.row():
-                for i in range (len(j.cartes_jouee)):
-                    ui.image(Path('cartes_j')/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
-            ui.label (hand.hand.liste_main_s[int(j.combo)])
-    ui.button('rejouer', on_click = rejouer)
-    ui.button('nouvelle partie', on_click =lambda :ui.navigate.to('/'))
-
-
-
-
-    
-
 
 ui.run()
