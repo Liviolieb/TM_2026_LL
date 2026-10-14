@@ -203,8 +203,8 @@ class hand :
             v_couleur= []
             for i in range (len(cartes_couleur)):
                 v_couleur.append(cartes_couleur[i].valeur)
-            v_couleur = sorted(v_couleur)
-            v_couleur = v_couleur[-5:]
+            v_couleur = sorted(v_couleur, reverse=True)
+            v_couleur = v_couleur[:5]
             cartes_combo=[]
             for i in range (5):
                 for j in range (len(cartes_couleur)):

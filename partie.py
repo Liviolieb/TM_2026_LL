@@ -91,7 +91,7 @@ class partie :
                         index_vote+=1
                         joueur.zone_jeu.refresh(5)
                     if vote == joueurs.Joueurs.Vote[0]:
-                        if joueur.solde - (self.table_partie.mise-joueur.mise) >= 0:
+                        if joueur.solde - (self.table_partie.mise-joueur.mise) >= 0 :
                             if index_vote != 0:
                                 nouveau_vote =True
                                 joueur_aug = index_vote
@@ -101,7 +101,9 @@ class partie :
 
                             while True:
                                 x = await afficher.afficher_vote(1,joueur)
-                                if x <= joueur.solde :
+                                if x<0:
+                                    await afficher.afficher_vote(7,joueur)
+                                elif x <= joueur.solde:
                                     joueur.solde -= x
                                     self.table_partie.mise += x
                                     joueur.mise +=x
@@ -262,17 +264,25 @@ class partie :
             joueurs_p=[j for j in contributeurs if j.compte is False and j.couche is False]
             pot=(palier - palier_p)*len(contributeurs)
             if not joueurs_p:
-                part_remb = pot / len(contributeurs)
+                part_remb, reste = divmod(pot, len(contributeurs))
                 for c in contributeurs:
-                    c.solde += part_remb
+                    if reste >0:
+                        c.solde += part_remb +1
+                    else:
+                        c.solde += part_remb
+                    reste-=1
                 gain += pot
                 palier_p=palier
                 continue
             gagnants_p = self.def_gagnant(joueurs_p)
             if gagnants_p:
-                part = pot/len(gagnants_p)
+                part,reste= divmod(pot,len(gagnants_p))
                 for gp in gagnants_p:
-                    gp.solde += part
+                    if reste>0:
+                        gp.solde += part +1
+                    else:
+                        gp.solde += part
+                    reste-=1
                 gain+=pot
                 for g in gagnants_p :
                     if g not in gagnants:
@@ -281,9 +291,13 @@ class partie :
                 joueurs_p[0].solde+= pot
                 gain+= pot
             else:
-                part_remb = pot / len(joueurs_p)
+                part_remb,reste =divmod(pot, len(joueurs_p))
                 for jp in joueurs_p:
-                    jp.solde += part_remb
+                    if reste>0:
+                        jp.solde += part_remb +1
+                    else:
+                        jp.solde += part_remb
+                    reste-=1
                 gain += pot
             palier_p=palier
         for j in self.L_joueurs:

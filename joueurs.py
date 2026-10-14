@@ -25,5 +25,7 @@ class Joueurs :
         self.a_vote = asyncio.Event()
         self.mise_v=mise_v
         self.cle_gagnant=[]
+        self.temps=0
+        self.label_temps=""
     def __str__ (self):
         return self.nom

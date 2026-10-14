@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 
-
+TIMEOUT_VOTE = 60 
 
 
 
@@ -19,23 +19,47 @@ async def afficher_vote (etape,joueur):
     if etape == 0:
         joueur.a_vote = asyncio.Event()
         if joueur.zone_jeu:
+            joueur.temps = 60
             joueur.zone_jeu.refresh(0)
-        await joueur.a_vote.wait()
+        while joueur.temps>0:
+            await asyncio.sleep(1)
+            joueur.temps-=1
+            if joueur.label_temps:
+                joueur.label_temps.set_text(f"il vous reste {joueur.temps}s pour voter")
+            if joueur.a_vote.is_set():
+                break
+        if not joueur.a_vote.is_set():
+            joueur.reponse_vote = joueurs.Joueurs.Vote[2]
         return joueur.reponse_vote
     
     if etape ==1:
         joueur.a_vote = asyncio.Event()
         if joueur.zone_jeu:
+            joueur.temps=60
             joueur.zone_jeu.refresh(1)
-        await joueur.a_vote.wait()
+        while joueur.temps>0:
+            await asyncio.sleep(1)
+            joueur.temps-=1
+            if joueur.label_temps:
+                joueur.label_temps.set_text(f"il vous reste {joueur.temps}s pour miser")
+            if joueur.a_vote.is_set():
+                break
+        if not joueur.a_vote.is_set():
+            joueur.mise_v = 0
         return joueur.mise_v
     
     if etape ==2:
         joueur.zone_jeu.refresh(2)
+        await asyncio.sleep(2)
     if etape ==3:
         joueur.zone_jeu.refresh(3)
+        await asyncio.sleep(2)
     if etape ==4:
         joueur.zone_jeu.refresh(4)
+        await asyncio.sleep(2)
+    if etape ==7:
+        joueur.zone_jeu.refresh(7)
+        await asyncio.sleep(2)
 
 def afficher_cartes_joueur(partie):
         for joueur in partie.L_joueurs:

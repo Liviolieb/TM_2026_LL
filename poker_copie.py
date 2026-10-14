@@ -5,39 +5,48 @@ import hand
 import table
 from nicegui import ui
 from pathlib import Path
+import asyncio
 
 partie_x =None
 @ui.page('/')
 def accueil():
     ui.label("Configuration de la partie").style('font-size: 1.5em')
-    nb_joueurs_input = ui.number('Combien de joueurs :', value=3, min=2, max=10)
+    nb_joueurs_input =ui.number('Combien de joueurs :', value=3, min=2, max=10,precision=0)
 
     champ_joueurs = ui.column()
     champs = [] 
 
     def generer_champs():
-        bouton_j.delete()
-        champ_joueurs.clear()
-        champs.clear()
-        nb = int(nb_joueurs_input.value)
-        nb_joueurs_input.delete()
-        with champ_joueurs:
-            for i in range(nb):
-                with ui.row():
-                    input_nom = ui.input(f"Nom du joueur {i + 1}")
-                    input_solde = ui.number(f"Solde du joueur {i + 1}", value=1000,step=10)
-                champs.append((input_nom, input_solde))
+        if nb_joueurs_input.value:
+            bouton_j.delete()
+            champ_joueurs.clear()
+            champs.clear()
+            nb = int(nb_joueurs_input.value)
+            nb_joueurs_input.delete()
+            with champ_joueurs:
+                for i in range(nb):
+                    with ui.row():
+                        input_nom = ui.input(f"Nom du joueur {i + 1}") 
+                        input_solde = ui.number(f"Solde du joueur {i + 1}", value=1000,step=10,min=1,precision=0)
+                    champs.append((input_nom, input_solde))
 
     bouton_j=ui.button("Valider le nombre de joueurs", on_click=generer_champs)
 
     resultat = ui.column()
 
-    def demarrer_partie():
+    async def demarrer_partie():
         global partie_x
         if partie_x is not None and partie_x.table_partie.main_pot != 0:
             with resultat:
                 resultat.clear()
                 ui.label("Une partie est déjà en cours. Rejoins-la plutôt que d'en créer une nouvelle.")
+                ui.spinner()
+                for i in range (3):
+                    x=ui.label(f"connexion dans {3-i}")
+                    await asyncio.sleep(1)
+                    x.delete()
+                ui.navigate.to('/jeu')
+                
             return
         if not champs:
             with resultat:
@@ -45,11 +54,21 @@ def accueil():
                 ui.label("Valide d'abord le nombre de joueurs.")
             return
         L_joueurs = []
-        for input_nom, input_solde in champs:
-            nom = input_nom.value or "Joueur"
+        for i in range(len(champs)):
+            input_nom, input_solde = champs[i]
+            nom = input_nom.value or (f"Joueur {i+1}")
             solde = int(input_solde.value)
             L_joueurs.append(joueurs.Joueurs(nom, solde))
         partie_x = partie.partie(L_joueurs)
+        if len(L_joueurs) != len(set(s.nom.lower() for s in L_joueurs)):
+            with resultat:
+                partie_x=None
+                resultat.clear()
+                ui.label("Vous devez avoir des noms différent")
+                
+
+            return
+
         resultat.clear()
         ui.navigate.to('/jeu')
         
@@ -157,6 +176,7 @@ async def jeu_j(j: str):
                 moi.reponse_vote = t_vote.value
                 moi.a_vote.set()
             ui.button('valider', on_click=valider )
+            moi.label_temps=ui.label(f"il vous reste {moi.temps}s pour voter")
         
         if etape ==1:
             x =ui.number("Quelle mise voulez vous rajouter? :",value =10,step=10)
@@ -164,10 +184,14 @@ async def jeu_j(j: str):
                 moi.mise_v = x.value
                 moi.a_vote.set()
             ui.button('valider', on_click=valider)
+            moi.label_temps=ui.label(f"il vous reste {moi.temps}s pour miser")
             
         
         if etape ==2:
             ui.label(f"vous n'avez pas le solde nécessaire, vous pouvez miser au maximum {moi.solde}")
+
+        if etape ==7:
+            ui.label(f"vous ne pouvez pas miser un montant négatif")
 
         if etape ==3:
             ui.label("pas un vote autorisé")
