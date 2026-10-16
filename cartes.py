@@ -6,6 +6,7 @@ class Cartes :
         self.valeur = valeur
     def __str__(self):
         return f"{self.valeur} de {self.couleur}"
+    @staticmethod
     def creer_pack ():
         L=[]
         for i in range (13):

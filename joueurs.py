@@ -1,6 +1,7 @@
 import asyncio
 class Joueurs :
     Vote =["aug","suivre","coucher","tapis"]
+    Vote_libelles ={"aug":"Relancer","suivre":"Suivre","coucher":"Coucher","tapis":"Tapis"}
     def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=0, cartes_jouables=None, combo =0,couche=False,allin=False, points=0, jape=None,zone_entete = None,zone_jeu = None,reponse_vote = None,mise_v=None):
         self.nom = nom
         self.solde=solde

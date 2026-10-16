@@ -36,7 +36,7 @@ def accueil():
 
     async def demarrer_partie():
         global partie_x
-        if partie_x is not None and partie_x.table_partie.main_pot != 0:
+        if partie_x is not None and partie_x.table_partie.pot_princ != 0:
             with resultat:
                 resultat.clear()
                 ui.label("Une partie est déjà en cours. Rejoins-la plutôt que d'en créer une nouvelle.")
@@ -93,7 +93,9 @@ async def jeu():
     for j in partie_x.L_joueurs:
         if not j.couche:
             await j.pret.wait() 
-    await partie_x.vote()
+    index_1 = (partie_x.index + 1) % len(partie_x.L_joueurs)
+    
+    await partie_x.vote(index_1,True,partie_x.index)
 
     partie_x.table_partie.etape +=1
     afficher.afficher_cartes_table(partie_x,0)
@@ -113,17 +115,17 @@ async def jeu():
     gain=0
     gagnant=None
     
-    while partie_x.table_partie.main_pot !=0:
+    while partie_x.table_partie.pot_princ !=0:
         if len(partie_x.def_gagnant()) == 1:
             gagnant=partie_x.def_gagnant()[0]
             gain=partie_x.atribution_pots(gagnant)
             gagnant.compte =True
-            partie_x.table_partie.main_pot -= gain
+            partie_x.table_partie.pot_princ -= gain
             partie_x.L_gagnants=[gagnant]
         else:
             partie_x.L_gagnants=partie_x.def_gagnant()
             gain=partie_x.atribution_pots_execos_1()
-            partie_x.table_partie.main_pot-= gain
+            partie_x.table_partie.pot_princ-= gain
     afficher.afficher_cartes_table(partie_x,1)
     for j in partie_x.L_joueurs:
         if j.zone_jeu:
@@ -154,15 +156,15 @@ async def jeu_j(j: str):
             row= ui.row()
             with row:
                 for i in range (len(moi.cartes)):
-                    ui.image(Path('cartes_j')/str(moi.cartes[i].couleur)/f"{moi.cartes[i].valeur}.png").style('width: 120px')
+                    ui.image(afficher.CARTES_DIR/str(moi.cartes[i].couleur)/f"{moi.cartes[i].valeur}.png").style('width: 120px')
             ui.label (hand.hand.liste_main_s[int(moi.combo)])
-            ui.label(f"le main pot est : {partie_x.table_partie.main_pot}")
+            ui.label(f"le main pot est : {partie_x.table_partie.pot_princ}")
             ui.label(f"les autres personnes ont misé : {partie_x.table_partie.mise}")
             ui.label(table.Table.type_etape[partie_x.table_partie.etape])
             with ui.row():
                 for i in range (partie_x.table_partie.etape):
-                    for j in range (len(partie_x.table_partie.liste[i])):
-                        ui.image(Path('cartes_j')/str(partie_x.table_partie.liste[i][j].couleur)/f"{partie_x.table_partie.liste[i][j].valeur}.png").style('width: 120px')
+                    for k in range (len(partie_x.table_partie.liste[i])):
+                        ui.image(afficher.CARTES_DIR/str(partie_x.table_partie.liste[i][k].couleur)/f"{partie_x.table_partie.liste[i][k].valeur}.png").style('width: 120px')
 
 
 
@@ -171,7 +173,10 @@ async def jeu_j(j: str):
 
         if etape == 0:
             ui.label(f"{moi.nom}, que voulez vous faire")
-            t_vote=ui.toggle(joueurs.Joueurs.Vote)
+            Vote_t = {}
+            for v in joueurs.Joueurs.Vote:
+                Vote_t[v] = joueurs.Joueurs.Vote_libelles[v]
+            t_vote=ui.toggle(Vote_t)
             def valider ():
                 moi.reponse_vote = t_vote.value
                 moi.a_vote.set()
@@ -210,19 +215,19 @@ async def jeu_j(j: str):
                     ui.label(f"le grand gagnant est {partie_x.L_gagnants[0].nom}")
                 with ui.row():
                     for i in range (len(partie_x.L_gagnants[0].cartes_jouee)):
-                        ui.image(Path('cartes_j')/str(partie_x.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie_x.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
+                        ui.image(afficher.CARTES_DIR/str(partie_x.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie_x.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
                 ui.label (hand.hand.liste_main_s[int(partie_x.L_gagnants[0].combo)])
             else:
                 ui.label("Les gagnants sont : " )
-                for j in partie_x.L_gagnants:
+                for g in partie_x.L_gagnants:
                     with ui.row():
-                        ui.label(j.nom)
-                for j in partie_x.L_gagnants:
-                    ui.label(f"{j.nom} avait :")
+                        ui.label(g.nom)
+                for g in partie_x.L_gagnants:
+                    ui.label(f"{g.nom} avait :")
                     with ui.row():
-                        for i in range (len(j.cartes_jouee)):
-                            ui.image(Path('cartes_j')/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
-                    ui.label (hand.hand.liste_main_s[int(j.combo)])
+                        for i in range (len(g.cartes_jouee)):
+                            ui.image(afficher.CARTES_DIR/str(g.cartes_jouee[i].couleur)/f"{g.cartes_jouee[i].valeur}.png").style('width: 120px')
+                    ui.label (hand.hand.liste_main_s[int(g.combo)])
             ui.button('Rejouer', on_click =lambda :ui.navigate.to('/'))
 
 
@@ -235,5 +240,6 @@ async def jeu_j(j: str):
             
     await ui.context.client.connected()
     moi.pret.set()
+if __name__ in {"__main__", "__mp_main__"}:
+    ui.run()
 
-ui.run()

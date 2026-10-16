@@ -6,7 +6,7 @@ from nicegui import ui
 from pathlib import Path
 
 
-
+CARTES_DIR = Path(__file__).parent / 'cartes_j'
 
 
 
@@ -75,18 +75,18 @@ def afficher_cartes_table(partie,etape):
         partie.table_partie.jape.clear()
         with partie.table_partie.jape:
             if etape==0:
-                ui.label(f"le main pot est : {partie.table_partie.main_pot}")
+                ui.label(f"le main pot est : {partie.table_partie.pot_princ}")
                 ui.label(table.Table.type_etape[partie.table_partie.etape])
                 with ui.row():
                     for i in range (partie.table_partie.etape):
                         for j in range (len(partie.table_partie.liste[i])):
-                                ui.image(Path('cartes_j')/str(partie.table_partie.liste[i][j].couleur)/f"{partie.table_partie.liste[i][j].valeur}.png").style('width: 120px')
+                                ui.image(CARTES_DIR/str(partie.table_partie.liste[i][j].couleur)/f"{partie.table_partie.liste[i][j].valeur}.png").style('width: 120px')
             elif etape==1:
                 if len(partie.L_gagnants)== 1 :
                     ui.label(f"le grand gagnant est {partie.L_gagnants[0].nom}")
                     with ui.row():
                         for i in range (len(partie.L_gagnants[0].cartes_jouee)):
-                            ui.image(Path('cartes_j')/str(partie.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
+                            ui.image(CARTES_DIR/str(partie.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
                     ui.label (hand.hand.liste_main_s[int(partie.L_gagnants[0].combo)])
                 else:
                     ui.label("Les gagnants sont : " )
@@ -97,7 +97,7 @@ def afficher_cartes_table(partie,etape):
                         ui.label(f"{j.nom} avait :")
                         with ui.row():
                             for i in range (len(j.cartes_jouee)):
-                                ui.image(Path('cartes_j')/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
+                                ui.image(CARTES_DIR/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
                         ui.label (hand.hand.liste_main_s[int(j.combo)])
 
         for j in partie.L_joueurs:
@@ -118,7 +118,7 @@ def grand_gagnant (gagnant):
     ui.label(f"le grand gagnant est {gagnant.nom}")
     with ui.row():
         for i in range (len(gagnant.cartes_jouee)):
-            ui.image(Path('cartes_j')/str(gagnant.cartes_jouee[i].couleur)/f"{gagnant.cartes_jouee[i].valeur}.png").style('width: 120px')
+            ui.image(CARTES_DIR/str(gagnant.cartes_jouee[i].couleur)/f"{gagnant.cartes_jouee[i].valeur}.png").style('width: 120px')
     ui.label (hand.hand.liste_main_s[int(gagnant.combo)])
 
 def afficher_solde (joueur):

@@ -48,16 +48,16 @@ for joueur in L_joueurs:
     afficher.afficher_solde(joueur)
 
 gain=0
-while partie_x.table_partie.main_pot !=0:
+while partie_x.table_partie.pot_princ !=0:
     if len(partie_x.def_gagnant()) == 1:
         gagnant=partie_x.def_gagnant()[0]
         gain=partie_x.atribution_pots(gagnant)
         afficher.grand_gagnant(gagnant)
         gagnant.couche =True
-        partie_x.table_partie.main_pot -= gain
+        partie_x.table_partie.pot_princ -= gain
     else:
             gain=partie_x.atribution_pots_execos_1()
-            partie_x.table_partie.main_pot-= gain
+            partie_x.table_partie.pot_princ-= gain
 
     
 

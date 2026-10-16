@@ -94,15 +94,6 @@ class hand :
             cartes_combo= three_oak[0] + paires[-1]
             cartes_kicker=self.kicker(cartes_combo)
             return(main_special,cartes_combo,cartes_kicker)
-        elif len(three_oak) ==1: #si il n'y a qu'une seule liste avec 3 cartes alors three_oak
-            main_special=3
-            cartes_combo=three_oak[0]
-        elif len(paires) >=2: #si il y a deux ou plus listes avec deux cartes alors on a une double paire avec les dernières paires détéctée (avec la valeur la plus élevée)
-            main_special=2
-            cartes_combo= paires[-1] + paires[-2]
-        elif len(paires) ==1 : # si il n'y a qu'une seule liste avec 2 cartes alors paire
-            main_special=1
-            cartes_combo=paires[0]
         
         L_sorted= sorted(set(self.L_valeur)) #on transforme la liste en set pour enlever les doublons puis on la trie en ordre croissant
 
@@ -217,13 +208,13 @@ class hand :
         elif straight is True :
                 main_special =4
                 cartes_combo= suite_C
-        elif len(three_oak) ==1:
+        elif len(three_oak) ==1: #si il n'y a qu'une seule liste avec 3 cartes alors three_oak
             main_special=3
             cartes_combo=three_oak[0]
-        elif len(paires) >=2:
+        elif len(paires) >=2: #si il y a deux ou plus listes avec deux cartes alors on a une double paire avec les dernières paires détéctée (avec la valeur la plus élevée)
             main_special=2
             cartes_combo= paires[-1] + paires[-2]
-        elif len(paires) ==1 :
+        elif len(paires) ==1 : # si il n'y a qu'une seule liste avec 2 cartes alors paire
             main_special=1
             cartes_combo=paires[0]
 

@@ -10,6 +10,7 @@ class partie :
         self.pack = cartes.Cartes.creer_pack()
         self.L_joueurs = L_joueurs
         self.L_gagnants= []
+        self.index=0
                 
         for joueur in L_joueurs:
             joueur.mise=0
@@ -58,11 +59,13 @@ class partie :
                 self.table_partie.mise = gb.mise
             else:
                 self.table_partie.mise = pb.mise
-            self.table_partie.main_pot += pb.mise + gb.mise
-    async def vote (self):
-        index_vote =0
-        nouveau_vote = False
-        joueur_aug=0
+            self.table_partie.pot_princ += pb.mise + gb.mise
+
+            for index, j in enumerate(L_joueurs):
+                if j == gb :
+                    self.index=index
+
+    async def vote (self,index_vote =0,nouveau_vote = False,joueur_aug=0):
         
         while True:
             L_votants = [j for j in self.L_joueurs if not j.couche and not j.allin]
@@ -82,10 +85,10 @@ class partie :
                     if vote == joueurs.Joueurs.Vote[1]:
                         if joueur.solde - (self.table_partie.mise-joueur.mise) >= 0:
                             joueur.solde -= self.table_partie.mise-joueur.mise
-                            self.table_partie.main_pot += self.table_partie.mise-joueur.mise
+                            self.table_partie.pot_princ += self.table_partie.mise-joueur.mise
                             joueur.mise = self.table_partie.mise
                         else:
-                            self.table_partie.main_pot += joueur.solde
+                            self.table_partie.pot_princ += joueur.solde
                             joueur.mise += joueur.solde
                             joueur.solde =0
                         index_vote+=1
@@ -96,7 +99,7 @@ class partie :
                                 nouveau_vote =True
                                 joueur_aug = index_vote
                             joueur.solde -= self.table_partie.mise-joueur.mise
-                            self.table_partie.main_pot += self.table_partie.mise-joueur.mise
+                            self.table_partie.pot_princ += self.table_partie.mise-joueur.mise
                             joueur.mise = self.table_partie.mise
 
                             while True:
@@ -107,12 +110,12 @@ class partie :
                                     joueur.solde -= x
                                     self.table_partie.mise += x
                                     joueur.mise +=x
-                                    self.table_partie.main_pot += x
+                                    self.table_partie.pot_princ += x
                                     break
                                 else:
                                     await afficher.afficher_vote(2,joueur)
                         else:
-                            self.table_partie.main_pot += joueur.solde
+                            self.table_partie.pot_princ += joueur.solde
                             joueur.mise += joueur.solde
                             joueur.solde =0
                             await afficher.afficher_vote(4,joueur)
@@ -122,19 +125,19 @@ class partie :
                     if vote == joueurs.Joueurs.Vote[3]:
                         if joueur.solde - (self.table_partie.mise-joueur.mise) >= 0:
                             joueur.solde -= self.table_partie.mise-joueur.mise
-                            self.table_partie.main_pot += self.table_partie.mise-joueur.mise
+                            self.table_partie.pot_princ += self.table_partie.mise-joueur.mise
                             joueur.mise = self.table_partie.mise
                             if index_vote != 0:
                                 nouveau_vote =True
                                 joueur_aug = index_vote
-                            self.table_partie.main_pot += joueur.solde
+                            self.table_partie.pot_princ += joueur.solde
                             joueur.mise += joueur.solde
                             self.table_partie.mise= joueur.mise
                             joueur.solde =0
                             index_vote+=1
                             joueur.zone_jeu.refresh(5)
                         else:
-                            self.table_partie.main_pot += joueur.solde
+                            self.table_partie.pot_princ += joueur.solde
                             joueur.mise += joueur.solde
                             joueur.solde =0
                             index_vote+=1
@@ -235,8 +238,8 @@ class partie :
     
     def atribution_pots(self,joueur):
         if joueur.allin is False:
-            joueur.solde += self.table_partie.main_pot
-            return(self.table_partie.main_pot)
+            joueur.solde += self.table_partie.pot_princ
+            return(self.table_partie.pot_princ)
         else :
             pot_j=0
             for j in self.L_joueurs :
