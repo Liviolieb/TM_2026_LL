@@ -6,105 +6,83 @@ from nicegui import ui
 from pathlib import Path
 
 
-CARTES_DIR = Path(__file__).parent / 'cartes_j'
+CARTES_DIR = Path(__file__).parent / 'cartes_j' # pour que peu importe où se trouve notre dossier on retrouve chaque fois cartes_j en revenant de 1 dossier depuis afficher
 
 
 
-TIMEOUT_VOTE = 60 
+TIMEOUT_VOTE = 60  # le temps qu'on laisse à l'utilisateur pour voter et pour miser
 
 
+def rafraichir(refreshable, *args): # au lieu de tout le temps refresh, car si la page n'existe plus, erreur de refresh
+    if refreshable is None:
+        return
+    try:
+        refreshable.refresh(*args)
+    except Exception:
+        pass
 
-
-async def afficher_vote (etape,joueur):
+async def afficher_vote (etape,joueur,a_payer=0): # a_payer est la différence entre la mise actuelle du joueur et la mise des autres joueurs
     if etape == 0:
-        joueur.a_vote = asyncio.Event()
-        if joueur.zone_jeu:
-            joueur.temps = 60
-            joueur.zone_jeu.refresh(0)
-        while joueur.temps>0:
+        joueur.a_vote = asyncio.Event() # on veut pouvoir attendre cette variable (est-ce que le joueur a voté et on peut continuer) (c'est chaque fois un nouvel event)
+        joueur.temps = TIMEOUT_VOTE # atrribution au joueur pour pouvoir l'afficher
+        rafraichir(joueur.zone_jeu,0)
+        while joueur.temps>0: # on fait une boucle sur le temps restant au joueur et on diminue de 1 à chaque fois
+            if joueur.label_temps:
+                joueur.label_temps.set_text(f"il vous reste {joueur.temps}s pour voter") # on évite de refresh pour pas refaire à chaque fois le toggle
+            if joueur.a_vote.is_set(): # si le joueur a valider et donc set son a_vote on a pas besoin d'attendre plus longtemps(is_set() rend booleen)
+                break
             await asyncio.sleep(1)
             joueur.temps-=1
-            if joueur.label_temps:
-                joueur.label_temps.set_text(f"il vous reste {joueur.temps}s pour voter")
-            if joueur.a_vote.is_set():
-                break
-        if not joueur.a_vote.is_set():
-            joueur.reponse_vote = joueurs.Joueurs.Vote[2]
+        if not joueur.a_vote.is_set(): # si on est sorti de la while et que joueur n'as pas set cela signifie qu'on a attendu au delà de TIMEOUT_VOTE
+            if a_payer <=0: # si il est encore possible de continuer la partie sans augmenter, on fait suivre le joueur automatiquemnt
+                joueur.reponse_vote = joueurs.Joueurs.Vote[1]
+            else: # sinon on le couche
+                joueur.reponse_vote = joueurs.Joueurs.Vote[2]
         return joueur.reponse_vote
     
     if etape ==1:
-        joueur.a_vote = asyncio.Event()
-        if joueur.zone_jeu:
-            joueur.temps=60
-            joueur.zone_jeu.refresh(1)
-        while joueur.temps>0:
+        rafraichir(joueur.zone_entete) # le joueur à suivi automatiquement on rafraichi donc la zone entete
+        joueur.a_vote = asyncio.Event() # on veut pouvoir attendre cette variable (est-ce que le joueur a misé et on peut continuer)
+        joueur.temps=TIMEOUT_VOTE # atrribution au joueur pour pouvoir l'afficher
+        rafraichir(joueur.zone_jeu,1)
+        while joueur.temps>0: # on fait une boucle sur le temps restant au joueur et on diminue de 1 à chaque fois
+            if joueur.label_temps:
+                joueur.label_temps.set_text(f"il vous reste {joueur.temps}s pour miser") # on évite de refresh pour pas refaire à chaque fois le number
+            if joueur.a_vote.is_set():# si le joueur a valider et donc set son a_vote on a pas besoin d'attendre plus longtemps
+                break
             await asyncio.sleep(1)
             joueur.temps-=1
-            if joueur.label_temps:
-                joueur.label_temps.set_text(f"il vous reste {joueur.temps}s pour miser")
-            if joueur.a_vote.is_set():
-                break
-        if not joueur.a_vote.is_set():
-            joueur.mise_v = 0
+        if not joueur.a_vote.is_set(): # si on est sorti de la while et que joueur n'as pas set cela signifie qu'on a attendu au delà de TIMEOUT_VOTE
+            joueur.mise_v = 0 # on met tout simplement sa mise à 0 pour ne pas interférer avec le reste du jeu
         return joueur.mise_v
     
-    if etape ==2:
-        joueur.zone_jeu.refresh(2)
-        await asyncio.sleep(2)
-    if etape ==3:
-        joueur.zone_jeu.refresh(3)
-        await asyncio.sleep(2)
-    if etape ==4:
-        joueur.zone_jeu.refresh(4)
-        await asyncio.sleep(2)
-    if etape ==7:
-        joueur.zone_jeu.refresh(7)
-        await asyncio.sleep(2)
+    if etape >=2:
+        rafraichir(joueur.zone_jeu,etape)
+        await asyncio.sleep(2) # on veut que le message reste un petit moment( pour etape==6 ça n'as pas d'influence)
 
-def afficher_cartes_joueur(partie):
+def afficher_cartes_joueurs(partie):
         for joueur in partie.L_joueurs:
-                joueur.cartes_jouables = hand.hand(joueur.cartes, partie.table_partie)
-                joueur.combo, joueur.cartes_combo, joueur.cartes_kicker = joueur.cartes_jouables.analyse_main()
-                joueur.cartes_jouee = joueur.cartes_combo+joueur.cartes_kicker
+                joueur.hand = hand.hand(joueur.cartes, partie.table_partie) # défnition de l'objet hand qu'on va pouvoir analyser
+                joueur.combo, joueur.cartes_combo, joueur.cartes_kicker = joueur.hand.analyse_main() # l'analyse nous resort le combo(sous forme int), les cartes qui composent ce combo et les cartes qui complète le combo pour former une main
+                joueur.cartes_jouee = joueur.cartes_combo+joueur.cartes_kicker # cartes que le joueur va jouer (meilleur combo possible) on ne l'affichera que à la fin pour le ou les jouers gagnants
         for j in partie.L_joueurs:
-            if j.zone_entete:
-                j.zone_entete.refresh()
+            rafraichir(j.zone_entete)
                 
 
 def afficher_cartes_table(partie,etape):
-        partie.table_partie.jape.clear()
-        with partie.table_partie.jape:
-            if etape==0:
-                ui.label(f"le main pot est : {partie.table_partie.pot_princ}")
-                ui.label(table.Table.type_etape[partie.table_partie.etape])
-                with ui.row():
-                    for i in range (partie.table_partie.etape):
-                        for j in range (len(partie.table_partie.liste[i])):
-                                ui.image(CARTES_DIR/str(partie.table_partie.liste[i][j].couleur)/f"{partie.table_partie.liste[i][j].valeur}.png").style('width: 120px')
-            elif etape==1:
-                if len(partie.L_gagnants)== 1 :
-                    ui.label(f"le grand gagnant est {partie.L_gagnants[0].nom}")
-                    with ui.row():
-                        for i in range (len(partie.L_gagnants[0].cartes_jouee)):
-                            ui.image(CARTES_DIR/str(partie.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
-                    ui.label (hand.hand.liste_main_s[int(partie.L_gagnants[0].combo)])
-                else:
-                    ui.label("Les gagnants sont : " )
-                    for j in partie.L_gagnants:
-                        with ui.row():
-                            ui.label(j.nom)
-                    for j in partie.L_gagnants:
-                        ui.label(f"{j.nom} avait :")
-                        with ui.row():
-                            for i in range (len(j.cartes_jouee)):
-                                ui.image(CARTES_DIR/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
-                        ui.label (hand.hand.liste_main_s[int(j.combo)])
+    for vue in partie.vues_tables[:]: # on veut gerer la vue de chaque page qui s'ouvre sur la table ([:]car on va peut-être remove une vue)
+        try:
+            vue.refresh(etape)
+        except Exception:
+            partie.vues_tables.remove(vue) # si on arrive pas a refresh la page à été fermée on a plus besoin de s'en occuper, si elle est réouverte une nouvell vue sera créée
+    for j in partie.L_joueurs: #la zone entete des joueurs doit être synchronisé avec table (des éléments en commmun)
+        rafraichir(j.zone_entete)
 
-        for j in partie.L_joueurs:
-            if j.zone_entete is not None:
-                j.zone_entete.refresh()
-        
 
+
+
+
+#code mort il allait avec mes premier test la manière textuelle
 def nb_de_j ():
     x= int(input("Combien de joueurs :"))
     return(int(x))

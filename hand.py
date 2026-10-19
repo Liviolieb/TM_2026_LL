@@ -4,7 +4,7 @@ class hand :
     liste_main_s = ["carte haute","pair","two_pair","three_oak","straight","flush","full_house","four_oak","straight_flush","royal_flush"]
     def __init__(self,cartes_joueur, table):
         cartes_jouables = []
-        self.L_valeur = []
+        self.L_valeur = [] # liste des valeurs de cartes jouables
         for i in range (len(cartes_joueur)):
             cartes_jouables.append(cartes_joueur[i])
             self.L_valeur.append(cartes_joueur[i].valeur)
@@ -12,50 +12,50 @@ class hand :
             for j in range(len(table.liste[i])):
                 cartes_jouables.append(table.liste[i][j])
                 self.L_valeur.append(table.liste[i][j].valeur)
-        self.cartes_jouables = cartes_jouables
+        self.cartes_jouables = cartes_jouables # on fait une liste ou on ajoute les 2 cartes du joueurs et selon l'étape les cartes dévoilée sur la table
         
-    def kicker(self,cartes_combo):
+    def kicker(self,cartes_combo): #fonction qui défini les cartes qui complète les cartes combo pour faire une main complète
         cartes_kicker=[]
-        if len(cartes_combo)<5:
-            v_kicker=self.L_valeur.copy()
+        if len(cartes_combo)<5:  # toujours vrai sauf pour suite/couleur/quinte flush, qui fournissent déjà 5 cartes
+            v_kicker=self.L_valeur.copy() #copie pour ne pas modifier L_valeur ou cartes_jouables
             cartes_kicker=self.cartes_jouables.copy()
 
-            for carte in cartes_kicker[:]:
+            for carte in cartes_kicker[:]: # on parcours carte par carte une copie de cartes_kicker
                 for combo in cartes_combo:
-                    if carte.valeur ==combo.valeur:
+                    if carte.valeur ==combo.valeur and carte.couleur == combo.couleur: # on enlève les cartes qu'on à déjà prises dans les cartes_combo
                         cartes_kicker.remove(carte)
                         v_kicker.remove(carte.valeur)
                         break
             v_kicker=sorted(v_kicker)
-            nb_kicker = (5-len(cartes_combo))
-            v_kicker=v_kicker[-nb_kicker:]
-            for carte in cartes_kicker[:]:
-                    if carte.valeur not in v_kicker:
+            nb_kicker = (5-len(cartes_combo)) # on retiens le nombre de cartes qu'il nous faut pour compléter la main
+            v_kicker=v_kicker[-nb_kicker:] #on prend uniquement les cartes les plus hautes qui nous intéressent
+            for carte in cartes_kicker[:]: 
+                    if carte.valeur not in v_kicker: # on passe tout notre liste de carte du kicker et si la valeur n'est pas celle qui nous interesse, on enlève la carte de la liste
                         cartes_kicker.remove(carte)
                     else:
                         v_kicker.remove(carte.valeur)
 
-        cartes_kicker.sort(key=lambda carte: carte.valeur, reverse=True)
+        cartes_kicker.sort(key=lambda carte: carte.valeur, reverse=True) # on les trie dans l'ordre décroissant pour def_gagnant
         return cartes_kicker
 
             
 
     def analyse_main (self):  #fonction d'analyse du combo 
-        main_special= 0
-        cartes_combo=[]
-        cartes_kicker = []
-        L_pique=[]
-        L_trefle=[]
-        L_carreau=[]
-        L_coeur=[]
-        paires =[]
-        three_oak =[]
-        flush = False
-        straight = False
-        position = []
-        temp=[]
-        cartes_couleur=[]
-        s_f= False 
+        main_special= 0 # la variable (int) qui va définir le combo selon la liste_main_s
+        cartes_combo=[]  # les cartes qui seront associée avec la main spéciale
+        cartes_kicker = []  # les cartes qui complètent si nécessaire les cartes combo pour faire une main de 5 cartes
+        L_pique=[] # les cartes de couleur pique
+        L_trefle=[] # les cartes de couleur trefle
+        L_carreau=[] # les cartes de couleur carreau
+        L_coeur=[] # les cartes de couleur coeur
+        paires =[] # toutes les paires détéctée
+        three_oak =[] # tout les brelan détécté
+        flush = False # variable qui dit si on est en présence d'une couleur
+        straight = False # variable qui dit si on est en présence d'une suite
+        position = [] # liste qui va contenir les position des cartes lors de la répétition de leur valeur
+        temp=[] # variable temporaire qui va être utiliser comme 1 paire ou 1 brelan à rajouter dans la liste de brelan ou paires
+        cartes_couleur=[] # toute les cartes d'une certaine couleur si leurs nombre excede 5
+        s_f= False  # variable qui dit si on est en présence d'une quinte flush 
 
         for i in range (1,14): #boucle sur les 14 différentes cartes pour vérifier combien de fois on les retrouves dans notre main
             occurence_valeur =self.L_valeur.count(i)
@@ -98,20 +98,20 @@ class hand :
         L_sorted= sorted(set(self.L_valeur)) #on transforme la liste en set pour enlever les doublons puis on la trie en ordre croissant
 
         if {13,1,2,3,4}.issubset(set(self.L_valeur)): #on vérifie si la "roue" est dans L_valeur
-            L_sorted = [0] + L_sorted
+            L_sorted = [0] + L_sorted # si il y a une roue on utilise 0 pour représenter l'as
 
         n_suite=0
         suite=[]
         m_suite=[]
         suite_C=[]
         
-        for i in range (len(L_sorted)-1):        #on parcourt la liste et on vérifie que l'élément suivant est égal à celui en court plus 1
+        for i in range (len(L_sorted)-1):        #on parcourt la liste et on vérifie que l'élément suivant est égal à celui en cours plus 1
             if L_sorted[i]+1== L_sorted[i+1]:
                 n_suite += 1
-                suite.append(L_sorted[i])  # si c'est le cas on ajoute la carte dans notre liste suite et on rajoute 1 a n_suite
+                suite.append(L_sorted[i])  # si c'est le cas on ajoute la carte dans notre liste suite et on rajoute 1 à n_suite
                 if n_suite >= 4 : #si le nombre d'élément dans la liste suite (=n_suite) est égal a 4 alors on rajoute l'élément suivant pour faire une main de 5 cartes
                     straight=True
-                    m_suite =suite[-4:]+[L_sorted[i+1]]
+                    m_suite =suite[-4:]+[L_sorted[i+1]] # on réécrit chaque fois m_suite comme les 5 cartes les plus hautes consécutives
 
             else :
                 n_suite = 0
@@ -119,16 +119,16 @@ class hand :
 
         suite = m_suite
 
-        for i in range (len(suite)):
+        for i in range (len(suite)): # suite ne contient que des valeurs on la parcourt et on cherche dans cartes jouables les cartes qui ont cette valeurs
             for j in range (len(self.cartes_jouables)):
-                if (suite[i]== 0) and (self.cartes_jouables[j].valeur == 13):
+                if (suite[i]== 0) and (self.cartes_jouables[j].valeur == 13): # si la carte a la valeur 0 alors on sait que c'est un as (13)
                     suite_C.append(self.cartes_jouables[j])
                     break
-                if suite[i] == self.cartes_jouables[j].valeur:
+                if suite[i] == self.cartes_jouables[j].valeur:# en règle général on ajoute seulement si l'élément de suite est égal à la valeur de la carte
                     suite_C.append(self.cartes_jouables[j])
                     break
 
-        for j in range (len(self.cartes_jouables))  :
+        for j in range (len(self.cartes_jouables))  : # pour chaque carte on regarde sa couleur et on la trie selon cette dernière
             if self.cartes_jouables[j].couleur == "pique" :
                 L_pique.append(self.cartes_jouables[j])
             if self.cartes_jouables[j].couleur == "trefle" :
@@ -137,7 +137,7 @@ class hand :
                 L_carreau.append(self.cartes_jouables[j])
             if self.cartes_jouables[j].couleur == "coeur" :
                 L_coeur.append(self.cartes_jouables[j])
-        if len(L_carreau) >= 5:
+        if len(L_carreau) >= 5:  # si l'occurence d'une couleur est égale ou supérieur à 5 on peut constituer une main d'une certaine couleur
             flush = True
             cartes_couleur=L_carreau
         elif len(L_coeur) >= 5:
@@ -152,60 +152,67 @@ class hand :
 
         if flush is True :
             c_suite_C=[]
+            temp_c_suite=[]
             c_suite=[]
             c_valeur=[]
             nc_suite=0
-            for i in range (len(cartes_couleur)):
+            for i in range (len(cartes_couleur)):  # on applique le même fonctionnement que en haut pour detecter une suite 
                 c_valeur.append(cartes_couleur[i].valeur)
-            c_sorted= sorted(set(c_valeur))
-            if {13,1,2,3,4}.issubset(set(c_valeur)):
+
+            c_sorted= sorted(set(c_valeur)) #on transforme la liste en set pour enlever les doublons puis on la trie en ordre croissant
+
+            if {13,1,2,3,4}.issubset(set(c_valeur)): #on vérifie si la "roue" est dans L_valeur
                 c_sorted = [0] + c_sorted
 
-            for i in range (len(c_sorted)-1):
+            for i in range (len(c_sorted)-1): #on parcourt la liste et on vérifie que l'élément suivant est égal à celui en cours plus 1
                 if c_sorted[i]+1== c_sorted[i+1]:
                     nc_suite += 1
-                    c_suite.append(c_sorted[i])
-                    if nc_suite == 4 :
-                        c_suite.append(c_sorted[i+1])
-                        s_f=True
-                        break
+                    c_suite.append(c_sorted[i]) # si c'est le cas on ajoute la carte dans notre liste suite et on rajoute 1 à n_suite
+                    if nc_suite >= 4 : #si le nombre d'élément dans la liste suite (=n_suite) est égal a 4 alors on rajoute l'élément suivant pour faire une main de 5 cartes
+                        temp_c_suite= c_suite[-4:]+ [c_sorted [i+1]] # on réécrit chaque fois temp_c_suite comme les 5 cartes les plus hautes consécutives
+                        s_f=True # on a fait la vérification de suite sur des cartes déjà toute de la même couleur alors on peut affirmer que c'est une quinte flush
                 else :
                     nc_suite = 0
                     c_suite=[]
-            if nc_suite ==4:
-                for i in range (len(c_suite)):
+            c_suite= temp_c_suite
+
+            if s_f: 
+                for i in range (len(c_suite)): # c_suite ne contient que des valeurs on la parcourt et on cherche dans cartes couleur la carte qui a cette valeur
                     for j in range (len(cartes_couleur)):
-                        if (c_suite[i] == 0) and (cartes_couleur[j].valeur == 13):
+                        if (c_suite[i] == 0) and (cartes_couleur[j].valeur == 13):  # si la cartes a la valeur 0 alors on sait que c'est un as (13)
                             c_suite_C.append(cartes_couleur[j])
                             break
-                        if c_suite[i] == cartes_couleur[j].valeur:
+                        if c_suite[i] == cartes_couleur[j].valeur:  # en règle général on ajoute seulement si l'élément de suite est égal à la valeur de la carte
                             c_suite_C.append(cartes_couleur[j])
                             break
 
-                    
-        if s_f is True :   
-            main_special=8
+        # l'ordre des conditions suit le classement des mains, du plus fort au plus faible : une main plus faible ne doit jamais être testée avant une main plus forte compatible
+        
+        if s_f is True:
+            main_special=8 
             cartes_combo = c_suite_C
-            if c_suite[-1]==13 :
+            if c_suite[-1]==13 : # si la valeur la plus haute (dernière car ordre croissant) est 13 (as) on à une quinte flush royale
                 main_special= 9
                 cartes_combo = c_suite_C
-        elif flush is True:
+
+
+        elif flush is True: # dans ce cas on à uniquement un combo couleur et détecté
             main_special=5
             v_couleur= []
-            for i in range (len(cartes_couleur)):
+            for i in range (len(cartes_couleur)): # on fait une liste avec la valeur des cartes de la couleur en question
                 v_couleur.append(cartes_couleur[i].valeur)
-            v_couleur = sorted(v_couleur, reverse=True)
-            v_couleur = v_couleur[:5]
+            v_couleur = sorted(v_couleur, reverse=True) #on la trie dans l'ordre décroissant (utile pour prendre les plus haute, et surtout pour la comparaison de liste dans def_gagnant)
+            v_couleur = v_couleur[:5] #on garde seulement les 5 plus haute (5 prmière)
             cartes_combo=[]
-            for i in range (5):
+            for i in range (5): # v_couleur contient les valeurs on on la parcourt et on cherche dans cartes couleur la carte qui a cette valeur
                 for j in range (len(cartes_couleur)):
-                    if cartes_couleur[j].valeur == v_couleur[i]:
+                    if cartes_couleur[j].valeur == v_couleur[i]: # si l'élément de v_couleur est égal à la valeur de la carte on l'ajoute au combo
                         cartes_combo.append(cartes_couleur[j])
                         break
 
 
 
-        elif straight is True :
+        elif straight is True : # si c'est une suite on a déjà la liste toute prête qui contient la suite la plus haute
                 main_special =4
                 cartes_combo= suite_C
         elif len(three_oak) ==1: #si il n'y a qu'une seule liste avec 3 cartes alors three_oak

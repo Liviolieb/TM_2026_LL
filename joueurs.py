@@ -1,32 +1,32 @@
 import asyncio
 class Joueurs :
     Vote =["aug","suivre","coucher","tapis"]
-    Vote_libelles ={"aug":"Relancer","suivre":"Suivre","coucher":"Coucher","tapis":"Tapis"}
-    def __init__ (self, nom, solde, cartes=None, vote=None, role=None, mise=0, cartes_jouables=None, combo =0,couche=False,allin=False, points=0, jape=None,zone_entete = None,zone_jeu = None,reponse_vote = None,mise_v=None):
+    Vote_libelles ={"aug":"Relancer","suivre":"Suivre","coucher":"Coucher","tapis":"Tapis"} # en joli pour le toggle
+    couleurs_vote = {"aug": "red","suivre": "blue","coucher": "grey-7","tapis": "deep-purple",}
+    def __init__ (self, nom, solde): # ce sont les deux seuls variables qui sont définies et modifiées depuis le constructeur
         self.nom = nom
         self.solde=solde
-        self.cartes = cartes
-        self.vote =vote
-        self.role = role
-        self.mise= mise
-        self.cartes_jouables = cartes_jouables
-        self.combo = combo
-        self.couche = couche
-        self.compte = False
+        self.cartes = None
+        self.vote =None
+        self.role = None
+        self.mise= 0
+        self.hand = None
+        self.combo = 0
+        self.couche = False
         self.cartes_combo = []
         self.cartes_kicker = []
         self.cartes_jouee=self.cartes_kicker+self.cartes_combo
-        self.allin = allin
-        self.points= points
-        self.jape= jape
+        self.allin = False
+        self.points= 0
+        self.jape= None # page du joueur (pas confondre avec page de nicegui)
         self.pret = asyncio.Event()
-        self.zone_entete = zone_entete
-        self.zone_jeu = zone_jeu
-        self.reponse_vote = reponse_vote
+        self.zone_entete = None
+        self.zone_jeu = None
+        self.reponse_vote = None
         self.a_vote = asyncio.Event()
-        self.mise_v=mise_v
+        self.mise_v=None
         self.cle_gagnant=[]
         self.temps=0
-        self.label_temps=""
-    def __str__ (self):
+        self.label_temps=None
+    def __str__ (self): # surcharge pour d'anciens tests (version textuelle)
         return self.nom
