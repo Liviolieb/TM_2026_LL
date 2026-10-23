@@ -106,22 +106,22 @@ async def jeu():
                                 ui.image(afficher.CARTES_DIR/str(partie_x.table_partie.liste[i][j].couleur)/f"{partie_x.table_partie.liste[i][j].valeur}.png").style('width: 120px')
             elif etape==1:
                 if len(partie_x.L_gagnants)== 1 :
-                    ui.label(f"le grand gagnant est {partie_x.L_gagnants[0].nom}").style('color: white')
+                    ui.label(f"le grand gagnant est {partie_x.L_gagnants[0].nom}")
                     with ui.row():
                         for i in range (len(partie_x.L_gagnants[0].cartes_jouee)):
                             ui.image(afficher.CARTES_DIR/str(partie_x.L_gagnants[0].cartes_jouee[i].couleur)/f"{partie_x.L_gagnants[0].cartes_jouee[i].valeur}.png").style('width: 120px')
-                    ui.label (hand.hand.liste_main_s[int(partie_x.L_gagnants[0].combo)]).style('color: white')
+                    ui.label (hand.hand.liste_main_s[int(partie_x.L_gagnants[0].combo)])
                 else:
-                    ui.label("Les gagnants sont : " ).style('color: white')
+                    ui.label("Les gagnants sont : " )
                     for j in partie_x.L_gagnants:
                         with ui.row():
-                            ui.label(j.nom).style('color: white')
+                            ui.label(j.nom)
                     for j in partie_x.L_gagnants:
-                        ui.label(f"{j.nom} avait :").style('color: white')
+                        ui.label(f"{j.nom} avait :")
                         with ui.row():
                             for i in range (len(j.cartes_jouee)):
                                 ui.image(afficher.CARTES_DIR/str(j.cartes_jouee[i].couleur)/f"{j.cartes_jouee[i].valeur}.png").style('width: 120px')
-                        ui.label (hand.hand.liste_main_s[int(j.combo)]).style('color: white')
+                        ui.label (hand.hand.liste_main_s[int(j.combo)])
     partie_x.vues_tables.append(vue_table)
 
     def retirer_vue():
@@ -203,6 +203,7 @@ async def jeu_j(j: str):
         if moi.allin:
             ui.badge("Tapis", color="orange")
         row= ui.row()
+        
         with row:
             for i in range (len(moi.cartes)):
                 ui.image(afficher.CARTES_DIR/str(moi.cartes[i].couleur)/f"{moi.cartes[i].valeur}.png").style('width: 120px')

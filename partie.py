@@ -14,6 +14,7 @@ class partie :
         self.index=0
         self.lancee=None
         self.vues_tables=[]
+        self.revel_c=False
                 
         for joueur in L_joueurs:
             joueur.mise=0 # pour éventuellement faire des partie à plusieurs mains (plusieurs tours)
@@ -27,6 +28,8 @@ class partie :
             for carte in cartes_x:
                 self.pack.remove(carte)
             joueur.cartes = cartes_x 
+            if cartes_x[0].valeur==cartes_x[1].valeur: #si le joueur reçoit une paire
+                joueur.combo =1
         self.flop_partie= random.sample(self.pack, 3)  # même logique pour le flop (3 cartes)
         for carte in self.flop_partie:
                 self.pack.remove(carte)
@@ -40,7 +43,9 @@ class partie :
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie) 
 
         if len(self.L_actifs) >=2: #on veut définir une petite et une grosse blinde seulement si 2 joueurs sont actifs (pas possible de jouer avec moin que deux)
-            pb ,gb = random.sample(self.L_actifs,2) 
+            i_pb = random.randrange(len(self.L_actifs))
+            pb = self.L_actifs[i_pb]
+            gb = self.L_actifs[(i_pb + 1) % len(self.L_actifs)] # la grosse blinde est la suivante, en revenant au début si besoin
             if pb.solde >self.Petite_blind:# pour eviter des soldes negative
                 pb.mise = self.Petite_blind
                 pb.solde -= self.Petite_blind 
