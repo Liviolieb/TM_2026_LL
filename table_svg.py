@@ -161,11 +161,19 @@ def table_jolie(partie_x,joueur_table=None):
 
         angle = math.degrees(math.atan2(ty, tx)) # retrouver l'angle avec l'horizontale (atan2 plutôt que atan car gère x=0 et distingue les 4 quadrants)
         #on tourne sur x1 y1 car on veut tourner sur le centre de la carte et pas le coin
-        if joueur in(partie_x.L_gagnants) : # on met les cartes en doré du joueur gagnants
-            elements.append(f'<rect x="{xr1}" y="{yr1}" width="{w_r}" height="{h_r}"'
-                            f'fill="none" stroke="gold" stroke-width="2" rx="2" transform="rotate({angle} {x1} {y1})"/>') 
-            elements.append(f'<rect x="{xr2}" y="{yr2}" width="{w_r}" height="{h_r}"'
+        if joueur in(partie_x.L_gagnants) and partie_x.revel_c is True: # on met les cartes en doré du joueur gagnants
+            if joueur.cartes[0]in joueur.cartes_jouee:
+                elements.append(f'<rect x="{xr1}" y="{yr1}" width="{w_r}" height="{h_r}"'
+                                f'fill="none" stroke="gold" stroke-width="2" rx="2" transform="rotate({angle} {x1} {y1})"/>') 
+            else:
+                elements.append(f'<rect x="{xr1}" y="{yr1}" width="{w_r}" height="{h_r}"'
+                                f'fill="none" stroke="black" stroke-width="2" rx="2" transform="rotate({angle} {x1} {y1})"/>') 
+            if joueur.cartes[1] in joueur.cartes_jouee:
+                elements.append(f'<rect x="{xr2}" y="{yr2}" width="{w_r}" height="{h_r}"'
                                 f'fill="none" stroke="gold" stroke-width="2" rx="2" transform="rotate({angle} {x2} {y2})"/>')
+            else:
+                elements.append(f'<rect x="{xr2}" y="{yr2}" width="{w_r}" height="{h_r}"'
+                                f'fill="none" stroke="black" stroke-width="2" rx="2" transform="rotate({angle} {x2} {y2})"/>') 
         else:
             elements.append(f'<rect x="{xr1}" y="{yr1}" width="{w_r}" height="{h_r}"'
                             f'fill="none" stroke="black" stroke-width="2" rx="2" transform="rotate({angle} {x1} {y1})"/>')

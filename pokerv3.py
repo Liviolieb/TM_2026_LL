@@ -133,6 +133,7 @@ async def jeu(): #même raison que en haut chaque etape en son temps
         partie_x.L_gagnants=partie_x.def_gagnant()
         partie_x.atribution_pots()
         partie_x.table_partie.pot_princ= 0 # fin de partie (marqueur pour l'accueil) 
+        partie_x.table_partie.mise = 0
         afficher.afficher_cartes_table(partie_x,1)
         for j in partie_x.L_joueurs:
             if j.zone_jeu:
