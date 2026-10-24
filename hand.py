@@ -2,6 +2,8 @@ import table
 import cartes
 class hand :
     liste_main_s = ["carte haute","pair","two_pair","three_oak","straight","flush","full_house","four_oak","straight_flush","royal_flush"]
+    noms_mains = ["Carte haute", "Paire", "Double paire", "Brelan", "Suite",
+              "Couleur", "Full", "Carré", "Quinte flush", "Quinte flush royale"]
     def __init__(self,cartes_joueur, table):
         cartes_jouables = []
         self.L_valeur = [] # liste des valeurs de cartes jouables
@@ -57,7 +59,7 @@ class hand :
         cartes_couleur=[] # toute les cartes d'une certaine couleur si leurs nombre excede 5
         s_f= False  # variable qui dit si on est en présence d'une quinte flush 
 
-        for i in range (1,14): #boucle sur les 14 différentes cartes pour vérifier combien de fois on les retrouves dans notre main
+        for i in range (1,14): #boucle sur les 13 différentes cartes pour vérifier combien de fois on les retrouves dans notre main
             occurence_valeur =self.L_valeur.count(i)
 
             if occurence_valeur == 2: # si deux fois dans notre main on rajoute les deux cartes dans une liste (temp) qui est ensuite elle même ajoutée dans une liste (paires)
@@ -78,12 +80,12 @@ class hand :
                 main_special=7
                 cartes_combo=[]
                 position = [j for j, x in enumerate(self.L_valeur) if x == i]
-                for i in range (len(position)) :
-                    cartes_combo.append(self.cartes_jouables[position[i]])
+                for k in range (len(position)) :
+                    cartes_combo.append(self.cartes_jouables[position[k]])
                 cartes_kicker=self.kicker(cartes_combo)
                 return(main_special,cartes_combo,cartes_kicker)
         
-        if len(three_oak) ==2 : # si on a deux fois une liste de 3 même cartes alors on aura un full composé des deux première cartes de la première liste qui ont une valeur plus petite (car on ajoute les cartes de 1 à 14) et de la deuxieme liste
+        if len(three_oak) ==2 : # si on a deux fois une liste de 3 même cartes alors on aura un full composé des deux dernières cartes de la première liste qui ont une valeur plus petite (car on ajoute les cartes de 1 à 13) et de la deuxieme liste
             main_special=6
             cartes_combo= three_oak[1]+three_oak[0][1:]
             cartes_kicker=self.kicker(cartes_combo)

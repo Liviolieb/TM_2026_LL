@@ -3,7 +3,6 @@ import cartes
 import table
 import afficher
 import random
-import asyncio
 class partie :
     Grosse_blind= 20 # valeur de mise de la grosse blinde
     Petite_blind=10 # valeur de mise de la petite blinde
@@ -39,10 +38,10 @@ class partie :
         self.river_partie= random.sample(self.pack, 1) # même logique pour le river (1 carte)
         for carte in self.river_partie:
                 self.pack.remove(carte)
-        self.L_actifs =[j for j in self.L_joueurs if not j.couche] # on créer une liste avec tout les joueurs sauf ceux couché
+        self.L_actifs =[j for j in self.L_joueurs if not j.couche] # on créé une liste avec tous les joueurs sauf ceux couché
         self.table_partie = table.Table(self.flop_partie,self.turn_partie,self.river_partie) 
 
-        if len(self.L_actifs) >=2: #on veut définir une petite et une grosse blinde seulement si 2 joueurs sont actifs (pas possible de jouer avec moin que deux)
+        if len(self.L_actifs) >=2: #on veut définir une petite et une grosse blinde seulement si 2 joueurs sont actifs (pas possible de jouer avec moins que deux)
             i_pb = random.randrange(len(self.L_actifs))
             pb = self.L_actifs[i_pb]
             gb = self.L_actifs[(i_pb + 1) % len(self.L_actifs)] # la grosse blinde est la suivante, en revenant au début si besoin
@@ -87,7 +86,10 @@ class partie :
                 return()
             joueur = self.L_joueurs[index_vote]
 
+
             if joueur.couche is False and joueur.allin is False:
+                joueur.en_vote=True
+                afficher.afficher_cartes_table(self,0)
                 vote_x = await afficher.afficher_vote(0,joueur,self.table_partie.mise-joueur.mise)
                         
                 if vote_x: #si l'utilisateur appuie sur valider sans rien mettre dans le toggle
@@ -109,7 +111,7 @@ class partie :
                             self.table_partie.pot_princ += self.table_partie.mise-joueur.mise
                             joueur.mise = self.table_partie.mise
 
-                            while True:                                     # pour s'assurer que le joueur aie une mise valide 
+                            while True:                                     # pour s'assurer que le joueur ait une mise valide 
                                 x = await afficher.afficher_vote(1,joueur) 
                                 if x<0:
                                     await afficher.afficher_vote(7,joueur)  #  gestion de la mise négative
@@ -122,7 +124,7 @@ class partie :
                                     self.table_partie.pot_princ += x
                                     break
                                 else:
-                                    await afficher.afficher_vote(2,joueur) # pas le solde necesssaire pour miser x
+                                    await afficher.afficher_vote(2,joueur) # pas le solde nécesssaire pour miser x
                         else:
                             self.table_partie.pot_princ += joueur.solde # si pas les fonds necessaire mise au tapis
                             joueur.mise += joueur.solde
@@ -160,17 +162,16 @@ class partie :
                     await afficher.afficher_vote(3,joueur) # valider sans toggle ("pas un vote autorisé")
                 if joueur.solde == 0: 
                     joueur.allin=True
-                
+
             else:
                 index_vote +=1 # cas ou joueur couché ou allin
                 afficher.rafraichir(joueur.zone_jeu,5) # remise en attente
 
-            for j in self.L_joueurs:
-                if j.zone_entete:  # sécurité au cas où un joueur quitte sa page
-                    afficher.rafraichir(j.zone_entete) #pour afficher le changement dans la mise/solde
-            
+            joueur.en_vote = False
+            afficher.afficher_cartes_table(self, 0)
+        
 
-            if index_vote == len(self.L_joueurs): # l'index est donc en dehors de la liste ce qui veut dire qu'ont doit recommencer à 0
+            if index_vote == len(self.L_joueurs): # l'index est donc en dehors de la liste ce qui veut dire qu'on doit recommencer à 0
                 index_vote =0
 
             if joueur_aug == index_vote : # on est retourné au joueur aug on peut sortir du vote 
@@ -179,10 +180,10 @@ class partie :
                     break
         
     def def_gagnant (self,joueurs=None) : 
-        self.L_actifs =joueurs if joueurs is not None else [j for j in self.L_joueurs if not j.couche and j.mise>0] # si il ne reçoit pas de joueurs spécifique comme dans pots execos, on prend juste les joueurs qui ne sont pas couché et qui on misé qqch
-        if not self.L_actifs:                                                                                      # une personne déjà comptée voit sa mise réduire à 0 
-            return[]  # utile pour pots execos, cas de figure normaux pas atteignable
+        self.L_actifs =joueurs if joueurs is not None else [j for j in self.L_joueurs if not j.couche and j.mise>0] # si il ne reçoit pas de joueurs spécifique comme dans attribution pot, on prend juste les joueurs qui ne sont pas couché et qui ont misé qqch
         joueur_gagnant = None
+        if not self.L_actifs: # aucun joueur éligible (ex. : seul joueur resté sans mise)
+            return []
         if len(self.L_actifs)==1: # s'il n'y a qu'un seul joueur actif, alors c'est le gagnant
             joueur_gagnant=self.L_actifs[0] 
             return([joueur_gagnant])
@@ -193,14 +194,12 @@ class partie :
             return([joueur_gagnant])
         
         else :                          # il y a donc au minimum deux personnes qui ont le même combo
-            L_joueurs_gagnants = []
             joueurs_gagnants=[]
             combo_p=[]
             index=0
             while self.L_actifs[index].combo == self.L_actifs[0].combo: # on va maintenant regarder tout le joueurs actif qui ont le même combo que le premier
                 joueur =self.L_actifs[index]
                 joueur.cle_gagnant = []
-                L_joueurs_gagnants.append(joueur)
                 for i in range(len(joueur.cartes_combo)): # pour comparer les combo on va regarder la valeur des cartes
                     carte = joueur.cartes_combo[i]
                     if (joueur.combo == 4 or joueur.combo == 8) and (i ==0) and (carte.valeur==13) : # dans le cas de la "roue" l'as est la carte la plus basse (0)
