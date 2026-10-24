@@ -64,6 +64,7 @@ Chaque décision doit être prise en **60 secondes**. Sans réponse, le joueur s
 - Un disque blanc marqué **D** indique le donneur.
 - Un joueur couché n'a plus de cartes affichées (il reste les deux cadres vides).
 - Au showdown, les cartes des joueurs encore en jeu sont révélées. Les cartes du ou des gagnants, et celles du board qui composent leur main, sont entourées en doré. Si tous les autres joueurs se sont couchés, les cartes du gagnant restent cachées.
+- À la fin de la main, le texte sous le board (là où s'affichait l'étape) annonce le ou les gagnants et leur combinaison, ou « remporte le pot » quand tous les autres joueurs se sont couchés.
 
 ### Sur votre page
 

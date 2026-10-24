@@ -4,6 +4,7 @@ import html
 from urllib.parse import quote
 import table
 from pathlib import Path
+import hand
 
 CARTES_DIR = Path(__file__).parent / 'cartes_j' # pour que peu importe où se trouve notre dossier on retrouve chaque fois cartes_j en revenant de 1 dossier depuis afficher
 app.add_static_files('/cartes_j', str(CARTES_DIR)) # Sert les images de cartes (dossier cartes_j/) à l'URL /cartes_j/, pour pouvoir utiliser href
@@ -45,9 +46,16 @@ def table_jolie(partie_x,joueur_table=None):
     rcy = ry -15
 
     th = html.escape("Texas hold'em") # pour pouvoir mettre le '
+    if len(partie_x.L_gagnants) >0: # au même endroit on affiche l'étape et à la fin le ou les joueurs gagnant
+        if partie_x.revel_c:
+            texte = f'{html.escape(" & ".join(g.nom for g in partie_x.L_gagnants))} : {hand.hand.noms_mains[partie_x.L_gagnants[0].combo]}'
+        else:
+            texte = f"{html.escape(partie_x.L_gagnants[0].nom)} remporte le pot"
+    else:
+        texte =f'{table.Table.etape_libelles[table.Table.type_etape[partie_x.table_partie.etape]]} · Pot : {partie_x.table_partie.pot_princ}'
     elements.append(
         f'<text x="{cx}" y="{cy + 25}" text-anchor="middle" '
-        f'dominant-baseline="middle" font-size="8" fill="gold" >{table.Table.etape_libelles[table.Table.type_etape[partie_x.table_partie.etape]]}</text> '
+        f'dominant-baseline="middle" font-size="8" fill="gold" >{texte}</text> '
 
         f'<text x="{cx}" y="{cy - 25}" text-anchor="middle" dominant-baseline="middle"'
         f'font-family="Georgia, serif" font-weight="bold" font-size="15"'

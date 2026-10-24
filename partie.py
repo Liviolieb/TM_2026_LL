@@ -14,6 +14,7 @@ class partie :
         self.lancee=None
         self.vues_tables=[]
         self.revel_c=False
+        self.dealer=0
                 
         for joueur in L_joueurs:
             joueur.mise=0 # pour éventuellement faire des partie à plusieurs mains (plusieurs tours)
