@@ -152,7 +152,7 @@ def table_jolie(partie_x,joueur_table=None):
             pile_c=pile[k]
             for i in range(len(pile_c)):
                 valeur,couleur= pile_c[i]
-                elements.append(jeton_svg(x_jeton+4*k,y_jeton-2*i,3,couleur,valeur)) #on construit un jeton et on le rajoute à la pile en le décalant légerement, et pour chaque couleur différente on décale vers la droite)
+                elements.append(jeton_svg(x_jeton-2*unx*i-6*ux*k,y_jeton-2*uny*i-6*uy*k,3,couleur,valeur)) #on construit un jeton et on le rajoute à la pile en le décalant légerement, et pour chaque couleur différente on décale vers la droite)
         # on écrit la solde en dessus du nom du joueur
         elements.append(
             f'<text x="{x_nom}" y="{y_nom-10}" text-anchor="middle" '
@@ -201,39 +201,6 @@ def table_jolie(partie_x,joueur_table=None):
             
         index = (index+1) % len(partie_x.L_joueurs) # pour passer au prochain joueur (modulo pour revenir à 0 après le dernier)
 
-
-            
-
-    """ for i in range(nb):
-        t = 2 * math.pi * i / nb + math.pi / 2
-        x = cx + rcx * math.cos(t)
-        y = cy + rcy * math.sin(t)
-
-        tx= -rcx * math.sin(t) 
-        ty=rcy * math.cos(t)
-        norme = math.hypot(tx, ty)
-        ux = tx / norme
-        uy= ty / norme
-
-        x1 = x + distance_b * ux 
-        y1 = y + distance_b * uy
-        x2 = x - distance_b * ux
-        y2 = y - distance_b * uy
-
-        xr1= x1 - w_r/2
-        yr1= y1 - h_r/2
-        xr2= x2 - w_r/2
-        yr2= y2 - h_r/2
-
-        angle = math.degrees(math.atan2(ry * math.cos(t), -rx * math.sin(t)))
-
-        elements.append(f'<rect x="{xr1}" y="{yr1}" width="{w_r}" height="{h_r}"'
-                        f'fill="none" stroke="black" stroke-width="4" rx="2" transform="rotate({angle} {x1} {y1})"/>')
-        elements.append(f'<rect x="{xr2}" y="{yr2}" width="{w_r}" height="{h_r}"'
-                            f'fill="none" stroke="black" stroke-width="4" rx="2" transform="rotate({angle} {x2} {y2})"/>')
-        elements.append(f'<image href="/cartes_j/verso.png" x="{xr1}" y="{yr1}" width="{w_r}" height="{h_r}" transform="rotate({angle} {x1} {y1})"/>')
-        elements.append(f'<image href="/cartes_j/verso.png" x="{xr2}" y="{yr2}" width="{w_r}" height="{h_r}" transform="rotate({angle} {x2} {y2})"/>')
-    """
         
     n=0
     for i in range (partie_x.table_partie.etape):
