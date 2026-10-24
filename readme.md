@@ -61,6 +61,7 @@ Chaque décision doit être prise en **60 secondes**. Sans réponse, le joueur s
 - Votre siège est toujours **en bas** ; les autres joueurs sont placés autour dans l'ordre de jeu.
 - Le nombre au-dessus d'un nom est son **solde**. Les jetons posés devant lui représentent sa **mise** du tour (1 blanc, 10 bleu, 50 vert, 100 noir, 500 violet).
 - Un cercle bleu qui tourne indique le joueur dont c'est le tour.
+- Un disque blanc marqué **D** indique le donneur.
 - Un joueur couché n'a plus de cartes affichées (il reste les deux cadres vides).
 - Au showdown, les cartes des joueurs encore en jeu sont révélées. Les cartes du ou des gagnants, et celles du board qui composent leur main, sont entourées en doré. Si tous les autres joueurs se sont couchés, les cartes du gagnant restent cachées.
 
@@ -78,7 +79,7 @@ Un panneau semi-transparent en haut à gauche regroupe :
 ## Règles implémentées
 
 - Texas Hold'em classique : 2 cartes privées et 5 cartes communes (flop de 3, turn, river).
-- Petite blinde de 10 et grosse blinde de 20, postées automatiquement : la petite blinde est tirée au hasard parmi les joueurs, la grosse blinde est le joueur suivant. Le pré-flop commence après la grosse blinde.
+- Petite blinde de 10 et grosse blinde de 20, postées automatiquement : la petite blinde est tirée au hasard parmi les joueurs, la grosse blinde est le joueur suivant. Le pré-flop commence après la grosse blinde. Le donneur est le joueur juste avant la petite blinde (à deux joueurs, la petite blinde elle-même) : après le flop, le turn et la river, la parole commence au premier joueur encore en jeu après lui.
 - Mises, suivis, relances, couchers et tapis.
 - Si tous les joueurs sauf un se couchent avant la fin, la main s'arrête : le joueur restant gagne le pot et les cartes du board qui n'avaient pas encore été dévoilées restent cachées.
 - **Side pots** quand des joueurs sont au tapis pour des montants différents. Un palier auquel plus aucun joueur encore en jeu n'a contribué est remboursé.
@@ -112,5 +113,5 @@ Le dossier `archive/` contient d'anciennes versions (`pokerv1.py`, `pokerv2.py`,
 
 - Chaque lancement ne joue qu'**une seule main** : le bouton « Rejouer » ramène à la page de configuration, et les soldes ne sont pas conservés d'une main à l'autre.
 - Il n'y a **pas de détection de fin de partie** (dernier joueur ayant encore des jetons). Elle n'aurait de sens qu'avec plusieurs mains à la suite.
-- Après le flop, le tour de parole commence toujours par le premier joueur de la liste : il n'y a pas de bouton du donneur qui tourne.
+- Le donneur est fixé une fois pour la main (déduit de la petite blinde) : comme il n'y a qu'une main par lancement, il n'y a pas de rotation du bouton d'une main à l'autre.
 - Une seule partie peut être active à la fois (`partie_x` est une variable globale du serveur). Démarrer une partie pendant qu'une main est en cours redirige vers la partie existante.

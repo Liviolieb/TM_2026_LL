@@ -70,6 +70,11 @@ class partie :
             for index, j in enumerate(L_joueurs): # pour commencer après la grosse blinde on retrouve son index
                 if j == gb :
                     self.index=index
+            
+            if len(self.L_actifs) == 2:  #le donneur est le joueur juste avant la petite blinde si deux joueurs : la petite blinde elle-même
+                self.dealer = i_pb
+            else:
+                self.dealer = (i_pb-1)%len(L_joueurs)
 
     async def vote (self,index_vote =0,joueur_aug=None): # joueur_aug = None au lieu de 0 car 0 peut être un index d'un joueur
 

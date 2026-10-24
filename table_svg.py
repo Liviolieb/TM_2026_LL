@@ -184,6 +184,12 @@ def table_jolie(partie_x,joueur_table=None):
                 f'from="-90 {x_nom} {y_nom+position}" to="270 {x_nom} {y_nom+position}" '
                 f'dur="1s" repeatCount="indefinite"/> '
                 '</circle>')
+        if partie_x.L_joueurs.index(joueur) == partie_x.dealer:
+            x_d = x + distance_mise * unx + 10 *ux
+            y_d = y + distance_mise * uny + 10 * uy
+            elements.append(
+                f'<circle cx="{x_d}" cy="{y_d}" r="5" fill="white" stroke="black" stroke-width="1"/> '
+                f'<text x="{x_d}" y="{y_d}" dy="0.35em" text-anchor="middle" font-size="6" font-weight="bold" fill="black">D</text> ')
             
         index = (index+1) % len(partie_x.L_joueurs) # pour passer au prochain joueur (modulo pour revenir à 0 après le dernier)
 

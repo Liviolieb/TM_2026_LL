@@ -125,7 +125,7 @@ async def jeu(): #même raison que en haut chaque etape en son temps
                 partie_x.table_partie.etape +=1 #on incrémente l'étape, on affiche les 3 nouvelles cartes, on analyse les mains, puis nouveau tour de vote.
                 afficher.afficher_cartes_table(partie_x,0)
                 afficher.afficher_cartes_joueurs(partie_x)
-                await partie_x.vote()
+                await partie_x.vote((partie_x.dealer + 1) % len(partie_x.L_joueurs))
 
         L_non_couche =[j for j in partie_x.L_joueurs if not j.couche]
         if len(L_non_couche) >1: # s'il ne reste plus qu'un seul joueur non couché, il ne montre pas ses cartes aux autres joueurs
