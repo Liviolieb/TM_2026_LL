@@ -1,11 +1,13 @@
 class Cartes :
     Couleurs = ["pique","trefle","carreau","coeur"]
     Valeurs = [1,2,3,4,5,6,7,8,9,10,11,12,13] #noter que 1 est la carte “2“ et 13 est l'“as“
+    noms_valeurs=[2,3,4,5,6,7,8,9,10,"valet","dame","roi","as"]
     def __init__ (self,couleur=None,valeur=0):
         self.couleur = couleur
         self.valeur = valeur
-    def __str__(self): # surcharge concernant des ancien test (version textuelle)
-        return f"{self.valeur} de {self.couleur}"
+    def __str__(self): # surcharge concernant les tests (test.py)
+        return f"{self.noms_valeurs[Cartes.Valeurs.index(self.valeur)]} de {self.couleur}"
+    __repr__ = __str__
     @staticmethod # la methode ne s'applique pas à un objet Cartes
     def creer_pack (): # un pack a toute les combinaison possible de couleur et valeur (13*4=52)
         L=[]
