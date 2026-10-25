@@ -36,6 +36,19 @@ python pokerv3.py
 
 Puis ouvrir `http://localhost:8080` dans un navigateur.
 
+## Tests
+
+Un seul fichier lance toutes les vérifications :
+
+```bash
+python test.py
+```
+
+- **15 mains de référence** pour l'évaluation des mains (`hand.py`) : un cas par type de main, de la carte haute à la quinte flush royale, plus des cas délicats (la roue A-2-3-4-5, une suite et une paire dans les mêmes cartes, deux brelans, trois paires, une couleur à six cartes). Pour chaque cas, le test vérifie le type de main, les cartes de la combinaison et les kickers, dans l'ordre.
+- **8 scénarios de départage** pour `def_gagnant` (`partie.py`), soit 14 vérifications : combos différents, même combo départagé par la valeur ou par un kicker, égalité parfaite (pot partagé), la roue contre une suite plus haute, deux couleurs, trois joueurs dans tous les ordres, un seul joueur, aucun joueur.
+
+Sortie attendue : `Tout bon pas d'erreur`. Le fichier compte les erreurs et les signale à la fin.
+
 ## Comment jouer
 
 1. Sur la page d'accueil, indiquer le nombre de joueurs (2 à 10) puis valider.
@@ -99,6 +112,7 @@ Un panneau semi-transparent en haut à gauche regroupe :
 | `hand.py` | Évaluation des mains (paire, suite, couleur, full, etc.) |
 | `afficher.py` | Rafraîchissement de l'interface et attente des votes (avec décompte) |
 | `table_svg.py` | Dessin de la table en SVG (sièges, cartes, jetons, noms) |
+| `test.py` | Tests : 15 mains de référence et 8 scénarios de départage |
 
 Le dossier `archive/` contient d'anciennes versions (`pokerv1.py`, `pokerv2.py`, `main.py` : première page de test, interface sans SVG, mode console). Elles ne fonctionnent plus avec le code actuel et sont conservées uniquement pour référence.
 
@@ -115,4 +129,5 @@ Le dossier `archive/` contient d'anciennes versions (`pokerv1.py`, `pokerv2.py`,
 - Chaque lancement ne joue qu'**une seule main** : le bouton « Rejouer » ramène à la page de configuration, et les soldes ne sont pas conservés d'une main à l'autre.
 - Il n'y a **pas de détection de fin de partie** (dernier joueur ayant encore des jetons). Elle n'aurait de sens qu'avec plusieurs mains à la suite.
 - Le donneur est fixé une fois pour la main (déduit de la petite blinde) : comme il n'y a qu'une main par lancement, il n'y a pas de rotation du bouton d'une main à l'autre.
+- Les tests automatiques ne couvrent que l'évaluation des mains et le départage des gagnants : ni l'interface, ni la répartition des pots.
 - Une seule partie peut être active à la fois (`partie_x` est une variable globale du serveur). Démarrer une partie pendant qu'une main est en cours redirige vers la partie existante.
